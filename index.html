@@ -243,4 +243,178 @@
         // Ceník a možnosti materiálu
         const pricing = {
             paroc: { name: 'Paroc BLT 9 (Kamenná vata)', prices: { '30 cm': 350, '25 cm': 335, '20 cm': 315 },
-                     desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: Paroc BLT 9</h4><p>Používáme špičkovou minerální kamennou izolaci. Je naprosto nehořlavá (třída reakce na oheň A1) a má vynikající součinitel tepelné vodivosti (až 0,034 W/mK). Díky své struktu
+                     desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: Paroc BLT 9</h4><p>Používáme špičkovou minerální kamennou izolaci. Je naprosto nehořlavá (třída reakce na oheň A1) a má vynikající součinitel tepelné vodivosti (až 0,034 W/mK). Díky své struktuře izolace v průběhu let nedegraduje, nemění své vlastnosti a udržuje si stabilní objem. Navíc skvěle tlumí hluk a je prodyšná, čímž chrání konstrukci před vlhkostí.</p>' },
+            ursa:  { name: 'URSA Pure Floc (Skelná vata)', prices: { '30 cm': 520, '25 cm': 505, '20 cm': 490 },
+                     desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: URSA Pure Floc</h4><p>Tato minerální izolace na bázi skla se pyšní vysokou známkou kvality RAL, což svědčí o její absolutní zdravotní nezávadnosti. Je nehořlavá (A1) a nabízí prémiovou tepelnou ochranu (součinitel tepelné vodivosti až 0,034 W/mK). Materiál je lehký, výborně propouští vodní páru a dokonale se přizpůsobí i těm nejmenším dutinám v konstrukci.</p>' },
+            role:  { name: 'Rolovaná vata DEK', prices: { '30 cm': 490, '18 cm': 390 },
+                     desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: Rolovaná vata</h4><p>Kvalitní izolace z minerální vlny určená pro pokládku. Nabízí skvělý poměr ceny a výkonu, je nehořlavá a pomáhá konstrukci dýchat. Pečlivá instalace zajišťuje eliminaci tepelných mostů a dlouhodobou ochranu před úniky tepla.</p>' }
+        };
+
+        const els = ['custName', 'custAddress', 'construction', 'material', 'thickness', 'area', 'lavka', 'zaklop', 'surcharge', 'validity', 'sitePhotos', 'ohradkaKs', 'ohradkaCena', 'vlastniNazev', 'vlastniCena'].reduce((acc, id) => {
+            acc[id] = document.getElementById(id);
+            return acc;
+        }, {});
+
+        // Inicializace možností tloušťky
+        function updateThicknessOptions() {
+            const mat = els.material.value;
+            els.thickness.innerHTML = Object.keys(pricing[mat].prices)
+                .map(th => `<option value="${th}">${th}</option>`).join('');
+            updatePreview();
+        }
+
+        // Nahrávání fotek
+        let uploadedPhotos = [];
+        els.sitePhotos.addEventListener('change', function(e) {
+            uploadedPhotos = [];
+            const files = Array.from(e.target.files).slice(0, 3);
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedPhotos.push(event.target.result);
+                    updatePreview();
+                }
+                reader.readAsDataURL(file);
+            });
+            updatePreview();
+        });
+
+        // Formátování měny
+        const fmt = (num) => Number(num).toLocaleString('cs-CZ');
+
+        // Hlavní funkce updatu náhledu
+        function updatePreview() {
+            document.getElementById('outName').innerText = els.custName.value || 'Nezadáno';
+            document.getElementById('outAddress').innerText = els.custAddress.value || 'Nezadáno';
+            
+            const today = new Date();
+            // Generuje hezké číslo např. 20260302-01
+            document.getElementById('outDateNum').innerText = `${today.getFullYear()}${(today.getMonth()+1).toString().padStart(2,'0')}${today.getDate().toString().padStart(2,'0')}-01`;
+            
+            const validDate = new Date();
+            validDate.setDate(today.getDate() + Number(els.validity.value));
+            document.getElementById('outValidity').innerText = validDate.toLocaleDateString('cs-CZ');
+
+            const matKey = els.material.value;
+            const thKey = els.thickness.value;
+            const basePrice = pricing[matKey].prices[thKey] || 0;
+            
+            const area = Number(els.area.value) || 0;
+            const surcharge = Number(els.surcharge.value) || 0;
+            const surchargePerM2 = area > 0 ? (surcharge / area) : 0;
+            
+            const unitPriceM2 = basePrice + surchargePerM2;
+            const totalM2 = unitPriceM2 * area;
+
+            const lavka = Number(els.lavka.value) || 0;
+            const totalLavka = lavka * 380;
+
+            const zaklop = Number(els.zaklop.value) || 0;
+            const totalZaklop = zaklop * 580;
+
+            const ohradkaKs = Number(els.ohradkaKs.value) || 0;
+            const ohradkaCena = Number(els.ohradkaCena.value) || 0;
+            const totalOhradka = ohradkaKs * ohradkaCena;
+
+            const vlastniNazev = els.vlastniNazev.value.trim();
+            const vlastniCena = Number(els.vlastniCena.value) || 0;
+
+            let tbody = `
+                <tr>
+                    <td class="border p-2">
+                        <strong>Zateplení: ${els.construction.value}</strong><br>
+                        <span class="text-sm text-gray-600">${pricing[matKey].name}, tloušťka ${thKey}</span>
+                    </td>
+                    <td class="border p-2 text-center whitespace-nowrap">${area} m²</td>
+                    <td class="border p-2 text-right whitespace-nowrap">${fmt(Math.round(unitPriceM2))} Kč</td>
+                    <td class="border p-2 text-right whitespace-nowrap">${fmt(Math.round(totalM2))} Kč</td>
+                </tr>
+            `;
+
+            if (lavka > 0) {
+                tbody += `
+                    <tr>
+                        <td class="border p-2">Vytvoření pochozí servisní lávky (šířka 62cm)</td>
+                        <td class="border p-2 text-center whitespace-nowrap">${lavka} bm</td>
+                        <td class="border p-2 text-right whitespace-nowrap">380 Kč</td>
+                        <td class="border p-2 text-right whitespace-nowrap">${fmt(totalLavka)} Kč</td>
+                    </tr>`;
+            }
+            if (zaklop > 0) {
+                tbody += `
+                    <tr>
+                        <td class="border p-2">Záklop - vytvoření pochozí plochy nad izolací</td>
+                        <td class="border p-2 text-center whitespace-nowrap">${zaklop} m²</td>
+                        <td class="border p-2 text-right whitespace-nowrap">580 Kč</td>
+                        <td class="border p-2 text-right whitespace-nowrap">${fmt(totalZaklop)} Kč</td>
+                    </tr>`;
+            }
+            if (ohradkaKs > 0) {
+                tbody += `
+                    <tr>
+                        <td class="border p-2">Vytvoření ohrádky prostupu</td>
+                        <td class="border p-2 text-center whitespace-nowrap">${ohradkaKs} ks</td>
+                        <td class="border p-2 text-right whitespace-nowrap">${fmt(ohradkaCena)} Kč</td>
+                        <td class="border p-2 text-right whitespace-nowrap">${fmt(totalOhradka)} Kč</td>
+                    </tr>`;
+            }
+            if (vlastniNazev !== "" && vlastniCena > 0) {
+                tbody += `
+                    <tr>
+                        <td class="border p-2">${vlastniNazev}</td>
+                        <td class="border p-2 text-center whitespace-nowrap">1 soub.</td>
+                        <td class="border p-2 text-right whitespace-nowrap">${fmt(vlastniCena)} Kč</td>
+                        <td class="border p-2 text-right whitespace-nowrap">${fmt(vlastniCena)} Kč</td>
+                    </tr>`;
+            }
+
+            document.getElementById('outTableBody').innerHTML = tbody;
+            
+            const celkovaCena = totalM2 + totalLavka + totalZaklop + totalOhradka + vlastniCena;
+            document.getElementById('outTotal').innerText = fmt(Math.round(celkovaCena));
+            
+            document.getElementById('outMaterialDesc').innerHTML = pricing[matKey].desc;
+
+            const photosCont = document.getElementById('sitePhotosContainer');
+            if (uploadedPhotos.length > 0) {
+                photosCont.classList.remove('hidden');
+                document.getElementById('outSitePhotos').innerHTML = uploadedPhotos.map(src => `<img src="${src}" class="print-img">`).join('');
+            } else {
+                photosCont.classList.add('hidden');
+            }
+        }
+
+        Object.values(els).forEach(el => {
+            if(el.id !== 'sitePhotos' && el.id !== 'material') {
+                el.addEventListener('input', updatePreview);
+            }
+        });
+
+        updateThicknessOptions();
+
+        function generatePDF() {
+            // Skryjeme okraje kolem náhledu před tiskem
+            const element = document.getElementById('pdf-preview');
+            const name = els.custName.value.replace(/\s+/g, '_') || 'Nezadano';
+            
+            const opt = {
+                margin:       [10, 10, 10, 10], // mm okraje nahoře, vlevo, dole, vpravo
+                filename:     `Cenova_nabidka_Izolace_${name}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, logging: false },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                // Zapnutí chytrého rozdělování stránek
+                pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+            
+            // Dočasně odstraníme padding během focení, html2pdf si udělá vlastní okraje z nastavení
+            element.style.padding = "0";
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Vrátíme padding zpět pro náhled na obrazovce
+                element.style.padding = "15mm";
+            });
+        }
+    </script>
+</body>
+</html>
