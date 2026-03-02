@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generátor nabídek - Efektivní izolace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Stylizace A4 stránky pro náhled a tisk */
+        #pdf-preview {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            padding: 20mm;
+            font-size: 14px;
+            color: #333;
+        }
+        .page-break { page-break-before: always; }
+        .print-img { object-fit: cover; width: 100%; height: 200px; border-radius: 4px; }
+        @media print {
+            body { background: white; }
+            #controls { display: none; }
+            #pdf-preview { box-shadow: none; margin: 0; padding: 0; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans p-4">
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <div id="controls" class="lg:col-span-4 bg-white p-6 rounded-lg shadow-md h-fit">
+            <h2 class="text-2xl font-bold mb-6 text-blue-800">Parametry nabídky</h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Jméno zákazníka</label>
+                    <input type="text" id="custName" class="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="Jan Novák">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Adresa realizace</label>
+                    <input type="text" id="custAddress" class="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="Zahradní 123, Praha">
+                </div>
+
+                <hr>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Typ konstrukce</label>
+                    <select id="construction" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                        <option value="Střecha">Střecha</option>
+                        <option value="Půda">Půda</option>
+                        <option value="Střecha mezi krokve">Střecha mezi krokve</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Materiál</label>
+                    <select id="material" class="mt-1 block w-full border border-gray-300 rounded-md p-2" onchange="updateThicknessOptions()">
+                        <option value="paroc">Paroc BLT 9 (Kamenná vata)</option>
+                        <option value="ursa">URSA Pure Floc (Skelná vata)</option>
+                        <option value="role">Rolovaná vata DEK</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Tloušťka</label>
+                        <select id="thickness" class="mt-1 block w-full border border-gray-300 rounded-md p-2"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Plocha (m²)</label>
+                        <input type="number" id="area" value="100" min="1" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Lávka (bm) - 380 Kč</label>
+                        <input type="number" id="lavka" value="0" min="0" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Záklop (m²) - 580 Kč</label>
+                        <input type="number" id="zaklop" value="0" min="0" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                    </div>
+                </div>
+
+                <hr>
+
+                <div>
+                    <label class="block text-sm font-medium text-red-600">Skrytá přirážka (Kč) - rozpustí se do m²</label>
+                    <input type="number" id="surcharge" value="0" min="0" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Platnost nabídky (dny)</label>
+                    <input type="number" id="validity" value="7" min="1" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                </div>
+
+                <hr>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fotky z obhlídky (max 3)</label>
+                    <input type="file" id="sitePhotos" multiple accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                <button onclick="generatePDF()" class="w-full mt-4 bg-blue-600 text-white font-bold py-3 px-4 rounded hover:bg-blue-700 transition">
+                    Stáhnout PDF Nabídku
+                </button>
+            </div>
+        </div>
+
+        <div class="lg:col-span-8 overflow-x-auto">
+            <div id="pdf-preview" class="relative">
+                
+                <div class="flex justify-between items-start border-b-2 border-blue-800 pb-4 mb-6">
+                    <div>
+                        <h1 class="text-3xl font-extrabold text-blue-800 tracking-wider">EFEKTIVNÍ IZOLACE</h1>
+                        <p class="text-gray-500 text-sm mt-1">Specialisté na foukané izolace</p>
+                    </div>
+                    <div class="text-right">
+                        <h2 class="text-xl font-bold">CENOVÁ NABÍDKA</h2>
+                        <p class="text-sm">Číslo: <span id="outDateNum"></span></p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="font-bold text-gray-700 border-b pb-1 mb-2">Dodavatel</h3>
+                        <p class="font-semibold">Efektivní izolace</p>
+                        <p>Jméno Příjmení</p>
+                        <p>Ulice a číslo</p>
+                        <p>PSČ a Město</p>
+                        <p>IČO: 12345678</p>
+                        <p>Tel: +420 123 456 789</p>
+                        <p>E-mail: info@efektivniizolace.cz</p>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-700 border-b pb-1 mb-2">Odběratel / Místo realizace</h3>
+                        <p class="font-semibold" id="outName">Jan Novák</p>
+                        <p id="outAddress">Zahradní 123, Praha</p>
+                        <br>
+                        <p><strong>Platnost nabídky do:</strong> <span id="outValidity"></span></p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <p>Vážený zákazníku,</p>
+                    <p class="mt-2 text-justify">
+                        na základě Vaší poptávky Vám předkládáme cenovou nabídku na zateplení Vašeho objektu systémem aplikované izolace. 
+                        Naším cílem je zajistit Vám maximální tepelný komfort, snížení nákladů na energie a precizní provedení práce.
+                    </p>
+                </div>
+
+                <table class="w-full mb-6 border-collapse">
+                    <thead>
+                        <tr class="bg-blue-50">
+                            <th class="border p-2 text-left">Položka / Popis</th>
+                            <th class="border p-2 text-center">Množství</th>
+                            <th class="border p-2 text-right">Cena za jedn.</th>
+                            <th class="border p-2 text-right">Celkem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="outTableBody">
+                        </tbody>
+                    <tfoot>
+                        <tr class="bg-gray-100 font-bold">
+                            <td colspan="3" class="border p-2 text-right">Cena celkem (vč. DPH, práce, materiálu a dopravy):</td>
+                            <td class="border p-2 text-right text-lg text-blue-800"><span id="outTotal">0</span> Kč</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <div class="bg-gray-50 p-4 rounded-md mb-8 text-sm">
+                    <h4 class="font-bold mb-2">Platební a dodací podmínky:</h4>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><strong>Nevybíráme žádné zálohy.</strong> Platba probíhá až po úspěšném dokončení realizace a podepsání předávacího protokolu.</li>
+                        <li>Cena je konečná a zahrnuje veškerý materiál, práci, dopravu a úklid pracoviště.</li>
+                        <li>Tloušťka foukané izolace je vždy počítána jako tloušťka po přirozeném sesednutí materiálu (aplikujeme více, abyste dostali zaplacenou vrstvu).</li>
+                    </ul>
+                </div>
+
+                <div id="outMaterialDesc" class="mb-8">
+                    </div>
+
+                <div id="sitePhotosContainer" class="hidden mb-8 page-break">
+                    <h3 class="text-xl font-bold mb-4 border-b-2 border-blue-800 pb-2">Fotografie z obhlídky místa realizace</h3>
+                    <div class="grid grid-cols-3 gap-4" id="outSitePhotos">
+                        </div>
+                </div>
+
+                <div class="page-break">
+                    <h3 class="text-xl font-bold mb-4 border-b-2 border-blue-800 pb-2">Ukázky našich realizací</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <img src="6b165abb-c731-4705-9dd5-6275c144b493.JPG" class="print-img" alt="Realizace 1">
+                        <img src="52da0cd1-db50-4784-bb11-f2abd98141f0.jpg" class="print-img" alt="Realizace 2">
+                        <img src="8ea3845a-08b7-4821-83fd-fda8cbf5ba9f.jpg" class="print-img" alt="Realizace 3">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Ceník a možnosti materiálu
+        const pricing = {
+            paroc: { name: 'Paroc BLT 9 (Kamenná vata)', prices: { '30 cm': 350, '25 cm': 335, '20 cm': 315 },
+                     desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: Paroc BLT 9</h4><p>Používáme špičkovou minerální kamennou izolaci. Je naprosto nehořlavá (třída reakce na oheň A1) a má vynikající součinitel tepelné vodivosti (až 0,034 W/mK). Díky své struktuře izolace v průběhu let nedegraduje, nemění své vlastnosti a udržuje si stabilní objem. Navíc skvěle tlumí hluk a je prodyšná, čímž chrání konstrukci před vlhkostí.</p>' },
+            ursa:  { name: 'URSA Pure Floc (Skelná vata)', prices: { '30 cm': 520, '25 cm': 505, '20 cm': 490 },
+                     desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: URSA Pure Floc</h4><p>Tato minerální izolace na bázi skla se pyšní vysokou známkou kvality RAL, což svědčí o její absolutní zdravotní nezávadnosti. Je nehořlavá (A1) a nabízí prémiovou tepelnou ochranu (součinitel tepelné vodivosti až 0,034 W/mK). Materiál je lehký, výborně propouští vodní páru a dokonale se přizpůsobí i těm nejmenším dutinám v konstrukci.</p>' },
+            role:  { name: 'Rolovaná vata DEK', prices: { '30 cm': 490, '18 cm': 390 },
+                     desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: Rolovaná vata</h4><p>Kvalitní izolace z minerální vlny určená pro pokládku. Nabízí skvělý poměr ceny a výkonu, je nehořlavá a pomáhá konstrukci dýchat. Pečlivá instalace zajišťuje eliminaci tepelných mostů a dlouhodobou ochranu před úniky tepla.</p>' }
+        };
+
+        const els = ['custName', 'custAddress', 'construction', 'material', 'thickness', 'area', 'lavka', 'zaklop', 'surcharge', 'validity', 'sitePhotos'].reduce((acc, id) => {
+            acc[id] = document.getElementById(id);
+            return acc;
+        }, {});
+
+        // Inicializace možností tloušťky
+        function updateThicknessOptions() {
+            const mat = els.material.value;
+            els.thickness.innerHTML = Object.keys(pricing[mat].prices)
+                .map(th => `<option value="${th}">${th}</option>`).join('');
+            updatePreview();
+        }
+
+        // Nahrávání fotek
+        let uploadedPhotos = [];
+        els.sitePhotos.addEventListener('change', function(e) {
+            uploadedPhotos = [];
+            const files = Array.from(e.target.files).slice(0, 3); // Max 3
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    uploadedPhotos.push(event.target.result);
+                    updatePreview();
+                }
+                reader.readAsDataURL(file);
+            });
+            updatePreview();
+        });
+
+        // Formátování měny
+        const fmt = (num) => Number(num).toLocaleString('cs-CZ');
+
+        // Hlavní funkce updatu náhledu
+        function updatePreview() {
+            // Texty
+            document.getElementById('outName').innerText = els.custName.value || 'Nezadáno';
+            document.getElementById('outAddress').innerText = els.custAddress.value || 'Nezadáno';
+            
+            // Datum a platnost
+            const today = new Date();
+            document.getElementById('outDateNum').innerText = `${today.getFullYear()}${(today.getMonth()+1).toString().padStart(2,'0')}${today.getDate().toString().padStart(2,'0')}-01`;
+            
+            const validDate = new Date();
+            validDate.setDate(today.getDate() + Number(els.validity.value));
+            document.getElementById('outValidity').innerText = validDate.toLocaleDateString('cs-CZ');
+
+            // Výpočty
+            const matKey = els.material.value;
+            const thKey = els.thickness.value;
+            const basePrice = pricing[matKey].prices[thKey] || 0;
+            
+            const area = Number(els.area.value) || 0;
+            const surcharge = Number(els.surcharge.value) || 0;
+            const surchargePerM2 = area > 0 ? (surcharge / area) : 0;
+            
+            // Finální cena za m2 (skrytá přirážka je rozpuštěna)
+            const unitPriceM2 = basePrice + surchargePerM2;
+            const totalM2 = unitPriceM2 * area;
+
+            const lavka = Number(els.lavka.value) || 0;
+            const totalLavka = lavka * 380;
+
+            const zaklop = Number(els.zaklop.value) || 0;
+            const totalZaklop = zaklop * 580;
+
+            let tbody = `
+                <tr>
+                    <td class="border p-2">
+                        <strong>Zateplení: ${els.construction.value}</strong><br>
+                        <span class="text-sm text-gray-600">${pricing[matKey].name}, tloušťka ${thKey}</span>
+                    </td>
+                    <td class="border p-2 text-center">${area} m²</td>
+                    <td class="border p-2 text-right">${fmt(Math.round(unitPriceM2))} Kč</td>
+                    <td class="border p-2 text-right">${fmt(Math.round(totalM2))} Kč</td>
+                </tr>
+            `;
+
+            if (lavka > 0) {
+                tbody += `
+                    <tr>
+                        <td class="border p-2">Vytvoření pochozí servisní lávky (šířka 62cm)</td>
+                        <td class="border p-2 text-center">${lavka} bm</td>
+                        <td class="border p-2 text-right">380 Kč</td>
+                        <td class="border p-2 text-right">${fmt(totalLavka)} Kč</td>
+                    </tr>`;
+            }
+            if (zaklop > 0) {
+                tbody += `
+                    <tr>
+                        <td class="border p-2">Záklop - vytvoření pochozí plochy nad izolací</td>
+                        <td class="border p-2 text-center">${zaklop} m²</td>
+                        <td class="border p-2 text-right">580 Kč</td>
+                        <td class="border p-2 text-right">${fmt(totalZaklop)} Kč</td>
+                    </tr>`;
+            }
+
+            document.getElementById('outTableBody').innerHTML = tbody;
+            document.getElementById('outTotal').innerText = fmt(Math.round(totalM2 + totalLavka + totalZaklop));
+            
+            // Popis materiálu
+            document.getElementById('outMaterialDesc').innerHTML = pricing[matKey].desc;
+
+            // Fotky obhlídka render
+            const photosCont = document.getElementById('sitePhotosContainer');
+            if (uploadedPhotos.length > 0) {
+                photosCont.classList.remove('hidden');
+                document.getElementById('outSitePhotos').innerHTML = uploadedPhotos.map(src => `<img src="${src}" class="print-img">`).join('');
+            } else {
+                photosCont.classList.add('hidden');
+            }
+        }
+
+        // Naslouchání změnám na všech inputech
+        Object.values(els).forEach(el => {
+            if(el.id !== 'sitePhotos' && el.id !== 'material') {
+                el.addEventListener('input', updatePreview);
+            }
+        });
+
+        // První spuštění
+        updateThicknessOptions();
+
+        // Generování PDF
+        function generatePDF() {
+            const element = document.getElementById('pdf-preview');
+            const name = els.custName.value.replace(/\s+/g, '_') || 'Nezadano';
+            const opt = {
+                margin:       0,
+                filename:     `Cenova_nabidka_Izolace_${name}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
