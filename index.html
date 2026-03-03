@@ -28,11 +28,13 @@
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             display: block;
+            width: 100%;
         }
 
         .page-break {
             page-break-before: always !important;
             break-before: page !important;
+            clear: both;
         }
 
         /* Zajištění, že tabulka se nebude lámat v řádku */
@@ -44,9 +46,16 @@
         .print-img {
             object-fit: cover;
             width: 100%;
-            height: 200px;
+            height: 180px;
             border-radius: 4px;
             page-break-inside: avoid !important;
+        }
+
+        /* Třídy pro tiskový režim */
+        #pdf-preview.printing {
+            width: 794px !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
         @media print {
@@ -64,12 +73,33 @@
                 box-shadow: none;
                 margin: 0;
                 width: 100%;
+                max-width: none;
+            }
+
+            #pdf-preview {
+                padding: 0 !important;
+                margin: 0 !important;
             }
 
             .no-print {
                 display: none !important;
             }
         }
+
+        #pdf-wrapper {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            color: #333;
+        }
+
+        #pdf-preview {
+            padding: 15mm;
+            font-size: 14px;
+        }
+    </style>
     </style>
 </head>
 
@@ -291,14 +321,14 @@
                     <div id="outMaterialDesc" class="mb-8 avoid-break">
                     </div>
 
-                    <div id="sitePhotosContainer" class="hidden mb-8 page-break avoid-break">
+                    <div id="sitePhotosContainer" class="hidden mb-12 page-break avoid-break">
                         <h3 class="text-xl font-bold mb-4 border-b-2 border-green-800 pb-2">Fotografie z obhlídky místa
                             realizace</h3>
                         <div class="grid grid-cols-3 gap-4" id="outSitePhotos">
                         </div>
                     </div>
 
-                    <div class="page-break avoid-break">
+                    <div class="page-break avoid-break pb-8">
                         <h3 class="text-xl font-bold mb-4 border-b-2 border-green-800 pb-2">Ukázky našich realizací</h3>
                         <div class="grid grid-cols-3 gap-4">
                             <img src="realizace-1.jpg" class="print-img" alt="Realizace 1">
@@ -485,17 +515,17 @@
             const name = els.custName.value.replace(/\s+/g, '_') || 'Nezadano';
 
             const opt = {
-                margin: [15, 15, 15, 15], // mm okraje nahoře, vlevo, dole, vpravo
+                margin: [10, 10, 10, 10], // mm okraje PDF dokumentu
                 filename: `Cenova_nabidka_Izolace_${name}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: {
-                    scale: 2,
+                    scale: 3, // Vyšší rozlišení pro tisk
                     useCORS: true,
                     logging: false,
-                    letterRendering: true
+                    letterRendering: true,
+                    width: 794 // Šířka plátna odpovídající A4
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                // Vylepšené rozdělování stránek
                 pagebreak: {
                     mode: ['avoid-all', 'css', 'legacy'],
                     before: '.page-break',
@@ -503,13 +533,15 @@
                 }
             };
 
-            // Dočasně upravíme padding a vzhled pro tisk
-            element.style.padding = "0";
+            // Režim pro "focení" obsahu
             element.classList.add('printing');
+            element.style.padding = "0"; // Odstranění paddingu pro export
+            element.style.width = "794px";
 
             html2pdf().set(opt).from(element).save().then(() => {
-                // Vrátíme vše zpět pro náhled na obrazovce
+                // Obnovení vzhledu v prohlížeči
                 element.style.padding = "15mm";
+                element.style.width = "auto";
                 element.classList.remove('printing');
             });
         }
