@@ -85,21 +85,6 @@
                 display: none !important;
             }
         }
-
-        #pdf-wrapper {
-            width: 210mm;
-            min-height: 297mm;
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 0 auto;
-            color: #333;
-        }
-
-        #pdf-preview {
-            padding: 15mm;
-            font-size: 14px;
-        }
-    </style>
     </style>
 </head>
 
@@ -510,20 +495,20 @@
         updateThicknessOptions();
 
         function generatePDF() {
-            // Skryjeme okraje kolem náhledu před tiskem
-            const element = document.getElementById('pdf-preview');
+            const wrapper = document.getElementById('pdf-wrapper');
             const name = els.custName.value.replace(/\s+/g, '_') || 'Nezadano';
 
             const opt = {
-                margin: [10, 10, 10, 10], // mm okraje PDF dokumentu
+                margin: [15, 15, 15, 15], // mm okraje PDF dokumentu
                 filename: `Cenova_nabidka_Izolace_${name}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: {
-                    scale: 3, // Vyšší rozlišení pro tisk
+                    scale: 2,
                     useCORS: true,
                     logging: false,
                     letterRendering: true,
-                    width: 794 // Šířka plátna odpovídající A4
+                    scrollX: 0,
+                    scrollY: -window.scrollY // Oprava posunu – snímáme od vrchu elementu, ne stránky
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: {
@@ -533,17 +518,7 @@
                 }
             };
 
-            // Režim pro "focení" obsahu
-            element.classList.add('printing');
-            element.style.padding = "0"; // Odstranění paddingu pro export
-            element.style.width = "794px";
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                // Obnovení vzhledu v prohlížeči
-                element.style.padding = "15mm";
-                element.style.width = "auto";
-                element.classList.remove('printing');
-            });
+            html2pdf().set(opt).from(wrapper).save();
         }
 
         async function sendOffer() {
