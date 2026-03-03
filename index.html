@@ -499,7 +499,8 @@
             const name = els.custName.value.replace(/\s+/g, '_') || 'Nezadano';
 
             const opt = {
-                margin: [15, 15, 15, 15], // mm okraje PDF dokumentu
+                // OPRAVA 1: Nastavíme margin na 0. Tvoje CSS už totiž dělá krásný padding 15mm.
+                margin: 0, 
                 filename: `Cenova_nabidka_Izolace_${name}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: {
@@ -508,7 +509,9 @@
                     logging: false,
                     letterRendering: true,
                     scrollX: 0,
-                    scrollY: -window.scrollY // Oprava posunu – snímáme od vrchu elementu, ne stránky
+                    scrollY: -window.scrollY,
+                    // OPRAVA 2: Vynutíme, aby plátno bralo přesnou šířku tvého obalu
+                    windowWidth: wrapper.scrollWidth 
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: {
