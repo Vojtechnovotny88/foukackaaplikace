@@ -547,8 +547,39 @@
 
             try {
                 btn.disabled = true;
-                btn.innerHTML = '<span>Odesílám...</span>';
+                btn.innerHTML = '<span>Generuji PDF a odesílám...</span>';
 
+                // --- 1. VYGENEROVÁNÍ PDF DO BASE64 ---
+                const wrapper = document.getElementById('pdf-wrapper');
+                const originalMargin = wrapper.style.margin;
+                wrapper.style.margin = '0';
+                
+                const currentScroll = window.scrollY;
+                window.scrollTo(0, 0);
+
+                const name = els.custName.value.replace(/\s+/g, '_') || 'Nezadano';
+                
+                const opt = {
+                    margin: 0,
+                    filename: `Cenova_nabidka_Izolace_${name}.pdf`,
+                    // Záměrně snížená kvalita pro optimalizaci velikosti přílohy (0.8 = 80%)
+                    image: { type: 'jpeg', quality: 0.80 }, 
+                    html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                // Získáme PDF jako Base64 Data URI
+                const pdfDataUri = await html2pdf().set(opt).from(wrapper).outputPdf('datauristring');
+                
+                // Vrátíme zobrazení na stránce do normálu
+                wrapper.style.margin = originalMargin;
+                window.scrollTo(0, currentScroll);
+
+                // Odřízneme hlavičku "data:application/pdf;base64," abychom měli čistý Base64 string
+                const base64Data = pdfDataUri.split('base64,')[1];
+                // --------------------------------------
+
+                // --- 2. PŘÍPRAVA DAT PRO WEBHOOK ---
                 const matKey = els.material.value;
                 const thKey = els.thickness.value;
                 const area = Number(els.area.value) || 0;
@@ -565,9 +596,13 @@
                     totalPrice: total,
                     offerNumber: document.getElementById('outDateNum').innerText,
                     validUntil: document.getElementById('outValidity').innerText,
-                    sentAt: new Date().toISOString()
+                    sentAt: new Date().toISOString(),
+                    // Tady přidáváme samotný soubor PDF a jeho název pro Tabidoo
+                    pdfFileName: `Cenova_nabidka_Izolace_${name}.pdf`,
+                    pdfFileBase64: base64Data 
                 };
 
+                // --- 3. ODESLÁNÍ ---
                 const response = await fetch(MAKE_WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
