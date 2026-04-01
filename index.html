@@ -133,10 +133,15 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-3 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Tloušťka</label>
                         <select id="thickness" class="mt-1 block w-full border border-gray-300 rounded-md p-2"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Cena za m²</label>
+                        <input type="number" id="pricePerM2" min="0"
+                            class="mt-1 block w-full border border-gray-300 rounded-md p-2" placeholder="350">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Plocha (m²)</label>
@@ -330,20 +335,20 @@
         // Ceník a možnosti materiálu
         const pricing = {
             paroc: {
-                name: 'Paroc BLT 9 (Kamenná vata)', prices: { '30 cm': 350, '25 cm': 335, '20 cm': 315 },
+                name: 'Paroc BLT 9 (Kamenná vata)', prices: { '40 cm': 380, '30 cm': 350, '25 cm': 335, '20 cm': 315 },
                 desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: Paroc BLT 9</h4><p>Používáme špičkovou minerální kamennou izolaci. Je naprosto nehořlavá (třída reakce na oheň A1) a má vynikající součinitel tepelné vodivosti (0,037 W/mK). Díky své struktuře izolace v průběhu let nedegraduje, nemění své vlastnosti a udržuje si stabilní objem. Navíc skvěle tlumí hluk a je prodyšná, čímž chrání konstrukci před vlhkostí.</p>'
             },
             ursa: {
-                name: 'URSA Pure Floc (Skelná vata)', prices: { '30 cm': 520, '25 cm': 505, '20 cm': 490 },
+                name: 'URSA Pure Floc (Skelná vata)', prices: { '40 cm': 550, '30 cm': 520, '25 cm': 505, '20 cm': 490 },
                 desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: URSA Pure Floc</h4><p>Tato minerální izolace na bázi skla se pyšní vysokou známkou kvality RAL, což svědčí o její absolutní zdravotní nezávadnosti. Je nehořlavá (A1) a nabízí prémiovou tepelnou ochranu (součinitel tepelné vodivosti až 0,034 W/mK). Materiál je lehký, výborně propouští vodní páru a dokonale se přizpůsobí i těm nejmenším dutinám v konstrukci.</p>'
             },
             role: {
-                name: 'Rolovaná vata DEK', prices: { '30 cm': 490, '18 cm': 390 },
+                name: 'Rolovaná vata DEK', prices: { '40 cm': 520, '30 cm': 490, '18 cm': 390 },
                 desc: '<h4 class="font-bold text-lg mb-2">Technické parametry: Rolovaná vata</h4><p>Kvalitní izolace z minerální vlny určená pro pokládku. Nabízí skvělý poměr ceny a výkonu, je nehořlavá a pomáhá konstrukci dýchat. Pečlivá instalace zajišťuje eliminaci tepelných mostů a dlouhodobou ochranu před úniky tepla.</p>'
             }
         };
 
-        const els = ['custName', 'custAddress', 'custEmail', 'construction', 'material', 'thickness', 'area', 'lavka', 'zaklop', 'surcharge', 'validity', 'sitePhotos', 'ohradkaKs', 'ohradkaCena', 'vlastniNazev', 'vlastniCena'].reduce((acc, id) => {
+        const els = ['custName', 'custAddress', 'custEmail', 'construction', 'material', 'thickness', 'pricePerM2', 'area', 'lavka', 'zaklop', 'surcharge', 'validity', 'sitePhotos', 'ohradkaKs', 'ohradkaCena', 'vlastniNazev', 'vlastniCena'].reduce((acc, id) => {
             acc[id] = document.getElementById(id);
             return acc;
         }, {});
@@ -358,8 +363,23 @@
             const mat = els.material.value;
             els.thickness.innerHTML = Object.keys(pricing[mat].prices)
                 .map(th => `<option value="${th}">${th}</option>`).join('');
+            updatePricePerM2();
             updatePreview();
         }
+
+        function updatePricePerM2() {
+            const mat = els.material.value;
+            const th = els.thickness.value;
+            const defaultPrice = pricing[mat].prices[th] || 0;
+            els.pricePerM2.value = defaultPrice;
+            els.pricePerM2.placeholder = defaultPrice;
+        }
+
+        // Aktualizovat cenu za m² při změně tloušťky
+        document.getElementById('thickness').addEventListener('change', function() {
+            updatePricePerM2();
+            updatePreview();
+        });
 
         // Nahrávání fotek
         let uploadedPhotos = [];
@@ -396,7 +416,9 @@
 
             const matKey = els.material.value;
             const thKey = els.thickness.value;
-            const basePrice = pricing[matKey].prices[thKey] || 0;
+            const defaultPrice = pricing[matKey].prices[thKey] || 0;
+            const customPrice = Number(els.pricePerM2.value);
+            const basePrice = customPrice > 0 ? customPrice : defaultPrice;
 
             const area = Number(els.area.value) || 0;
             const surcharge = Number(els.surcharge.value) || 0;
@@ -682,3 +704,4 @@
 </body>
 
 </html>
+
