@@ -11,15 +11,14 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - Vizuál vždy podle `docs/DESIGN-SYSTEM.md` (zdroj pravdy pro barvy, písmo, rozvržení).
 
 ## Nasazení
-- **Hlavní adresa (od 8. 10. 2026):** https://nabidky-efektivni-izolace.netlify.app – Netlify projekt
-  `nabidky-efektivni-izolace`, nahrává se ručně přetažením složky (Deploys → drag & drop).
+- **Hlavní adresa (od 8. 10. 2026):** https://nabidky-efekt-izolace.netlify.app – Netlify projekt
+  `nabidky-efekt-izolace`, nahrává se ručně přetažením složky (Deploys → drag & drop).
 - **Stará verze:** https://strong-tartufo-12ad44.netlify.app – už se nepoužívá, kód není na GitHubu.
 - **GitHub:** Vojtechnovotny88/foukackaaplikace
-  - `main` = starší verze z dubna 2026 (bez poznámky)
-  - `novy-design` = nová verze; po Vojtěchově potvrzení sloučit do `main`
+  - `main` = aktuální verze (od 8. 10. 2026 = nový design); `novy-design` sloučena do `main`
 - Historie a plán srozumitelně pro Vojtěcha: `docs/HISTORIE.md` – udržovat aktuální spolu s tímto souborem.
 
-## Struktura (větev novy-design)
+## Struktura
 - `index.html` – formulář a náhled (CSS přímo v souboru, tokeny z design systému)
 - `js/nastaveni.js` – **ceník, texty podmínek, kontakty, webhook** – vše, co se běžně mění
 - `js/dokument.js` – vzhled PDF (pdfmake): úvodní tmavý blok, klíčová čísla, sekce služeb
@@ -63,9 +62,7 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - V konzoli je `window.__generator` (vytvorPdf, ctiStav, zapisStav, spocitej) pro automatické testy.
 
 ## Otevřené otázky / úkoly
-- [ ] Make: v modulu Gmail přemapovat Subject → {{1.emailSubject}} a text → {{1.emailBody}} (nebo aspoň opravit telefon v textu)
 - [ ] Ověřit odeslání přes Make s novou verzí (na vlastní e-mail)
-- [ ] Po potvrzení od Vojtěcha (nasazeno + Make upraven): sloučit `novy-design` do `main`
 - [ ] Další fáze: víc fotek z realizací (sjednocený tón, jen autentické), logo Baumit u fasády – viz docs/HISTORIE.md
 - [ ] Webhook je ve veřejném repozitáři – zvážit soukromé repo / přegenerování webhooku
 
@@ -75,4 +72,6 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - 2026-10-08 – větev `novy-design`: kompletně nová aplikace podle design systému, vektorové PDF,
   fasády (plochy + tloušťky), kontakty podle webu, nové logo, záklop 690, poznámka
 - 2026-10-08 – přiložený technický list nahrazen výpisem technických parametrů (Paroc kompletně, URSA prozatímně)
+- 2026-10-08 – nasazeno na nabidky-efekt-izolace.netlify.app, Make přemapován na emailSubject/emailBody,
+  `novy-design` sloučena do `main`
 - 2026-10-08 – nové ceny foukané izolace, nové podmínky, URSA podle technického listu, DEKWOOL G 039r

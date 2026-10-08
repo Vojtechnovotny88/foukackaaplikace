@@ -3,7 +3,7 @@
 Přehled toho, co se na aplikaci dělalo, proč, a co je v plánu.
 Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v `docs/DESIGN-SYSTEM.md`.
 
-**Aplikace:** https://nabidky-efektivni-izolace.netlify.app (od 8. 10. 2026 hlavní adresa)
+**Aplikace:** https://nabidky-efekt-izolace.netlify.app (od 8. 10. 2026 hlavní adresa)
 **Stará verze:** https://strong-tartufo-12ad44.netlify.app (už se nepoužívá, zůstává jen pro jistotu)
 
 ---
@@ -40,12 +40,12 @@ Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v
 
 ---
 
-## Rozpracováno
+## Stav
 
-- [ ] Nasadit novou verzi na https://nabidky-efektivni-izolace.netlify.app (Vojtěch, 8. 10.)
-- [ ] Make: v modulu Gmail přemapovat Subject → `{{1.emailSubject}}`, text → `{{1.emailBody}}`
+- [x] Nová verze nasazena na https://nabidky-efekt-izolace.netlify.app (8. 10.)
+- [x] Make: modul Gmail přemapován na `{{1.emailSubject}}` a `{{1.emailBody}}` (8. 10.)
+- [x] Záloha: nová verze sloučena do hlavní větve `main` na GitHubu (8. 10.)
 - [ ] Zkušební odeslání na vlastní e-mail
-- [ ] Po potvrzení: sloučit `novy-design` do `main` (záloha na GitHubu)
 
 ## Plán – další kroky
 
