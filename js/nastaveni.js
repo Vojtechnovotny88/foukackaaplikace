@@ -23,6 +23,13 @@ window.NASTAVENI = {
   /* ---------- Make.com webhook (odeslání nabídky e-mailem + uložení do Tabidoo) ---------- */
   webhook: 'https://hook.eu2.make.com/ucjqvkazd3ahtgflguok9yrr3gsq57p1',
 
+  /* ---------- Text e-mailu (posílá se do Make jako emailSubject / emailBody) ----------
+     {jmeno} = jméno zákazníka, {sluzba} = např. „zateplení půdy a fasády“ */
+  email: {
+    predmet: 'Cenová nabídka na {sluzba} – {jmeno}',
+    text: 'Dobrý den,\n\nv příloze zasíláme slíbenou cenovou nabídku na {sluzba}. Pokud by bylo cokoliv potřeba změnit nebo vysvětlit, jsme Vám k dispozici.\n\nS přáním hezkého dne\nVendula Pailová\nEfektivní izolace s.r.o.\nwww.efektivniizolace.cz\n+420 799 558 004\nefektivniizolace@gmail.com'
+  },
+
   /* ---------- Platnost nabídky (výchozí počet dní) ---------- */
   platnostDni: 7,
 

@@ -321,6 +321,9 @@
         blownTotal: f ? f.celkem : 0, facadeTotal: fa ? fa.celkem : 0, facadeAreaM2: fa ? Math.round(fa.vymera * 100) / 100 : 0,
         note: [f && f.poznamka, fa && fa.poznamka].filter(Boolean).join('\n')
       };
+      const sluzba = d.nadpis.replace(/^Zateplení/, 'zateplení').replace(/ foukanou izolací$| systémem Baumit$/, '');
+      const dosad = t => t.replace(/\{jmeno\}/g, d.zakaznik.jmeno).replace(/\{sluzba\}/g, sluzba);
+      data.emailSubject = dosad(N.email.predmet); data.emailBody = dosad(N.email.text);
       const r = await fetch(N.webhook, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
       if (!r.ok) throw new Error('Make vrátil chybu ' + r.status);
       ulozHistorii({ cislo: d.cislo, jmeno: d.zakaznik.jmeno, celkem: d.celkem, odeslano: data.sentAt, sluzby: data.services, stav: s });

@@ -39,7 +39,10 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - **Odeslat zákazníkovi** → JSON na Make webhook. Pole jako dřív: customerName, customerEmail,
   customerAddress, constructionType, material, thickness, areaM2, totalPrice, offerNumber, validUntil,
   sentAt, pdfFileName, pdfFileBase64. Nová pole: customerPhone, services (foukana / fasada /
-  foukana+fasada), blownTotal, facadeTotal, facadeAreaM2, note.
+  foukana+fasada), blownTotal, facadeTotal, facadeAreaM2, note, emailSubject, emailBody.
+- **Make scénář „Odesílání nabídek foukačka“** (rozhodnuto 8. 10.: Make zůstává): Webhook → Gmail „Send an email“
+  z efektivniizolace@gmail.com, příloha = toBinary(pdfFileBase64). Nic dalšího (žádné Tabidoo, technický list
+  přidávala stará aplikace sama). Aplikace posílá i emailSubject / emailBody (šablona v `nastaveni.js` → email).
 - Číslo nabídky = RRRRMMDD-HHMM (už se neopakuje „-01“).
 - Historie posledních 30 odeslaných nabídek v prohlížeči; načtení obnoví celý formulář (kromě fotek).
 
@@ -58,8 +61,8 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 ## Otevřené otázky / úkoly
 - [ ] Vojtěch potvrdí ceny a podmínky (poslán seznam 8. 10.)
 - [ ] URSA: parametry jsou zatím z prohlášení o vlastnostech URSA PURE FLOC KD – ověřit podle technického listu od Vojtěcha
-- [ ] Odesílání jednodušeji než přes Make – návrh poslán 8. 10., čeká na rozhodnutí
-- [ ] Ověřit odeslání přes Make s novou verzí (nová pole namapovat ve scénáři, pokud je chce)
+- [ ] Make: v modulu Gmail přemapovat Subject → {{1.emailSubject}} a text → {{1.emailBody}} (nebo aspoň opravit telefon v textu)
+- [ ] Ověřit odeslání přes Make s novou verzí (na vlastní e-mail)
 - [ ] Po schválení: sloučit `novy-design` do `main` a přepnout ostrou adresu
 - [ ] Webhook je ve veřejném repozitáři – zvážit soukromé repo / přegenerování webhooku
 
