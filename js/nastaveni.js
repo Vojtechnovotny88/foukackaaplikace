@@ -77,13 +77,20 @@ window.NASTAVENI = {
         ]
       },
       role: {
-        nazev: 'Rolovaná vata DEK',
-        typ: 'Minerální vlna v rolích',
+        nazev: 'DEKWOOL G 039r',
+        typ: 'Skelná minerální vlna v rolích',
         ceny: { '40 cm': 520, '30 cm': 490, '18 cm': 390 },
-        lambda: null,                 // doplnit podle konkrétního výrobku
-        reakceNaOhen: null,
-        popis: 'Izolace z minerální vlny určená pro pokládku. Je nehořlavá a difuzně otevřená. Pečlivá pokládka bez mezer omezuje tepelné mosty.',
-        parametry: []
+        lambda: { volne: 0.039, dutina: 0.039 },
+        reakceNaOhen: 'A1',
+        popis: 'Víceúčelová tepelná izolace ze skleněných minerálních vláken v rolích, určená do stropů a podlah. Je nehořlavá a difuzně otevřená. Role pokládáme ve více vrstvách s převazbou spár, aby nevznikaly tepelné mosty.',
+        // zdroj: dek.cz – DEKWOOL G 039r
+        parametry: [
+          ['Materiál', 'MW – skelná minerální vlákna', ''],
+          ['Součinitel tepelné vodivosti λD', '0,039 W/mK', 'EN 12667'],
+          ['Třída reakce na oheň', 'A1 – nehořlavý', 'EN 13501-1'],
+          ['Faktor difuzního odporu µ', '1 – difuzně otevřený', 'EN 12086'],
+          ['Použití', 'tepelná izolace stropů a nezatížených podlah', '']
+        ]
       }
     },
 

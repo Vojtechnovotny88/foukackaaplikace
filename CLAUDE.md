@@ -45,7 +45,7 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 
 ## Ceník (js/nastaveni.js) – ČEKÁ NA POTVRZENÍ od Vojtěcha
 - Foukaná, Kč/m² vč. DPH: Paroc 40/30/25/20 cm = 399/379/369/359 · URSA 570/550/540/530 ·
-  DEK role 40/30/18 cm = 520/490/390. (Ostrá verze má Paroc 40 cm asi 479. Web uvádí od 299 Kč/m²
+  DEKWOOL G 039r (role) 40/30/18 cm = 520/490/390. (Ostrá verze má Paroc 40 cm asi 479. Web uvádí od 299 Kč/m²
   při 20 cm a 399 Kč/m² při 30 cm.)
 - Lávka 380 Kč/bm, záklop 690 Kč/m², ohrádka 800 Kč/ks.
 - Fasáda EPS, Kč/m² vč. DPH 12 %: 6=2240, 8=2270, 10=2300, 12=2340, 14=2370, 16=2400, 18=2450, 20=2500.
@@ -58,7 +58,6 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 ## Otevřené otázky / úkoly
 - [ ] Vojtěch potvrdí ceny a podmínky (poslán seznam 8. 10.)
 - [ ] URSA: parametry jsou zatím z prohlášení o vlastnostech URSA PURE FLOC KD – ověřit podle technického listu od Vojtěcha
-- [ ] Rolovaná vata DEK: zjistit konkrétní výrobek a doplnit parametry
 - [ ] Odesílání jednodušeji než přes Make – návrh poslán 8. 10., čeká na rozhodnutí
 - [ ] Ověřit odeslání přes Make s novou verzí (nová pole namapovat ve scénáři, pokud je chce)
 - [ ] Po schválení: sloučit `novy-design` do `main` a přepnout ostrou adresu
