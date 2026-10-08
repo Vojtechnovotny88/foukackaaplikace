@@ -46,12 +46,15 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - Číslo nabídky = RRRRMMDD-HHMM (už se neopakuje „-01“).
 - Historie posledních 30 odeslaných nabídek v prohlížeči; načtení obnoví celý formulář (kromě fotek).
 
-## Ceník (js/nastaveni.js) – ČEKÁ NA POTVRZENÍ od Vojtěcha
-- Foukaná, Kč/m² vč. DPH: Paroc 40/30/25/20 cm = 399/379/369/359 · URSA 570/550/540/530 ·
-  DEKWOOL G 039r (role) 40/30/18 cm = 520/490/390. (Ostrá verze má Paroc 40 cm asi 479. Web uvádí od 299 Kč/m²
-  při 20 cm a 399 Kč/m² při 30 cm.)
+## Ceník (js/nastaveni.js) – potvrzeno Vojtěchem 8. 10. 2026
+- Foukaná, Kč/m² vč. DPH: Paroc BLT 9 40/30/25/20 cm = 449/399/379/369 · URSA Pure Floc 640/610/590/570 ·
+  DEKWOOL G 039r (role) 40/30/18 cm = 530/500/410.
 - Lávka 380 Kč/bm, záklop 690 Kč/m², ohrádka 800 Kč/ks.
 - Fasáda EPS, Kč/m² vč. DPH 12 %: 6=2240, 8=2270, 10=2300, 12=2340, 14=2370, 16=2400, 18=2450, 20=2500.
+- Podmínky (foukaná 4 body, fasáda platby 50/25/25 + 5 bodů) podle Vojtěcha 8. 10. – texty v `nastaveni.js`,
+  {platnostDni}/{platnostDo} se dosadí automaticky.
+- Technické parametry: Paroc (technický list), URSA (technický list URSA Pure Floc, ETA-18/0889),
+  DEKWOOL G 039r (dek.cz).
 
 ## Testování
 - Lokálně: `python3 -m http.server 8765` ve složce projektu, otevřít http://localhost:8765
@@ -59,8 +62,6 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - V konzoli je `window.__generator` (vytvorPdf, ctiStav, zapisStav, spocitej) pro automatické testy.
 
 ## Otevřené otázky / úkoly
-- [ ] Vojtěch potvrdí ceny a podmínky (poslán seznam 8. 10.)
-- [ ] URSA: parametry jsou zatím z prohlášení o vlastnostech URSA PURE FLOC KD – ověřit podle technického listu od Vojtěcha
 - [ ] Make: v modulu Gmail přemapovat Subject → {{1.emailSubject}} a text → {{1.emailBody}} (nebo aspoň opravit telefon v textu)
 - [ ] Ověřit odeslání přes Make s novou verzí (na vlastní e-mail)
 - [ ] Po schválení: sloučit `novy-design` do `main` a přepnout ostrou adresu
@@ -72,3 +73,4 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - 2026-10-08 – větev `novy-design`: kompletně nová aplikace podle design systému, vektorové PDF,
   fasády (plochy + tloušťky), kontakty podle webu, nové logo, záklop 690, poznámka
 - 2026-10-08 – přiložený technický list nahrazen výpisem technických parametrů (Paroc kompletně, URSA prozatímně)
+- 2026-10-08 – nové ceny foukané izolace, nové podmínky, URSA podle technického listu, DEKWOOL G 039r

@@ -104,6 +104,8 @@
     const d = { cislo, datum: datumCZ(new Date()), zakaznik: { jmeno: s.jmeno.trim(), adresa: s.adresa.trim(), email: s.email.trim(), telefon: s.telefon.trim() }, uvod: s.uvod.trim() || N.texty.uvod, celkem: 0 };
     const pl = new Date(); pl.setDate(pl.getDate() + Math.max(1, num(s.platnost) || N.platnostDni));
     d.platnostDo = datumCZ(pl);
+    const dniPl = Math.max(1, num(s.platnost) || N.platnostDni);
+    const podm = arr => arr.map(p => Object.assign({}, p, { text: p.text.replace(/\{platnostDni\}/g, dniPl).replace(/\{platnostDo\}/g, d.platnostDo) }));
 
     if (s.sFoukana) {
       const mat = N.foukana.materialy[s.material], P = N.foukana.priplatky;
@@ -122,7 +124,7 @@
       const lambda = mat.lambda ? (dutina ? mat.lambda.dutina : mat.lambda.volne) : null;
       const tlM = parseFloat(String(s.tloustka).replace(',', '.')) / 100;
       const odporR = lambda && tlM ? Math.round(tlM / lambda * 10) / 10 : null;
-      d.foukana = { nazevSluzby, konstrukce: s.konstrukce, material: mat, materialKey: s.material, tloustka: s.tloustka, plocha, cenaM2, radky, celkem, podminky: N.foukana.podminky, poznamka: s.poznamkaFoukana.trim(), technickeParametry: s.technickyList, dutina, lambda, odporR };
+      d.foukana = { nazevSluzby, konstrukce: s.konstrukce, material: mat, materialKey: s.material, tloustka: s.tloustka, plocha, cenaM2, radky, celkem, podminky: podm(N.foukana.podminky), poznamka: s.poznamkaFoukana.trim(), technickeParametry: s.technickyList, dutina, lambda, odporR };
       d.celkem += celkem;
     }
 
@@ -148,7 +150,7 @@
         plochy, skupiny, polozky, celkem, bezDph, dph: celkem - bezDph, sazbaDph: sazba, platby,
         vymera: skupiny.reduce((a, g) => a + g.vymera, 0), rozsahTloustek: rozsah,
         neresene: plochy.filter(p => !p.tloustka).map(p => p.kod).filter(Boolean).join(', '),
-        odstin: s.odstin.trim(), termin: s.termin.trim(), uvodSekce: s.uvodFasada.trim() || null, poznamka: s.poznamkaFasada.trim()
+        podminky: podm(N.fasada.podminky), odstin: s.odstin.trim(), termin: s.termin.trim(), uvodSekce: s.uvodFasada.trim() || null, poznamka: s.poznamkaFasada.trim()
       };
       d.celkem += celkem;
     }

@@ -48,7 +48,7 @@ window.NASTAVENI = {
       paroc: {
         nazev: 'Paroc BLT 9',
         typ: 'Kamenná minerální vlna – granulát pro foukání',
-        ceny: { '40 cm': 399, '30 cm': 379, '25 cm': 369, '20 cm': 359 },
+        ceny: { '40 cm': 449, '30 cm': 399, '25 cm': 379, '20 cm': 369 },
         lambda: { volne: 0.037, dutina: 0.034 },
         reakceNaOhen: 'A1',
         popis: 'Kamenná minerální izolace ve formě granulátu. Je nehořlavá, v průběhu let nedegraduje, nemění své vlastnosti a drží stabilní objem. Dobře tlumí hluk a je difuzně otevřená, takže chrání konstrukci před vlhkostí.',
@@ -68,25 +68,27 @@ window.NASTAVENI = {
       ursa: {
         nazev: 'URSA Pure Floc',
         typ: 'Skelná minerální vlna – granulát pro foukání',
-        ceny: { '40 cm': 570, '30 cm': 550, '25 cm': 540, '20 cm': 530 },
-        lambda: { volne: 0.034, dutina: 0.034 },
+        ceny: { '40 cm': 640, '30 cm': 610, '25 cm': 590, '20 cm': 570 },
+        lambda: { volne: 0.036, dutina: 0.034 },
         reakceNaOhen: 'A1',
-        popis: 'Minerální izolace na bázi skla se známkou kvality RAL. Je lehká, dobře propouští vodní páru a vyplní i malé dutiny v konstrukci.',
-        // PROZATÍMNÍ hodnoty z prohlášení o vlastnostech URSA PURE FLOC KD – ověřit podle technického listu od Vojtěcha
+        popis: 'Minerální izolace na bázi skla se známkou kvality RAL, která potvrzuje její zdravotní nezávadnost. Je lehká, nedoutná, dobře propouští vodní páru a vyplní i malé dutiny v konstrukci.',
+        // zdroj: Technický list URSA Pure Floc (ETA-18/0889)
         parametry: [
-          ['Součinitel tepelné vodivosti λD', '0,034 W/mK', 'EN 12667'],
-          ['Třída reakce na oheň', 'A1 – nehořlavý', 'EN 13501-1'],
-          ['Doutnání', 'nedoutná', 'EN 14064-1'],
-          ['Faktor difuzního odporu µ', '1 – difuzně otevřený (MU1)', 'EN 12086'],
-          ['Třída sesedání', 'S1', 'EN 14064-1'],
-          ['Odpor proti proudění vzduchu', 'AF5', 'EN 29053'],
-          ['Označení výrobku', 'MW-EN14064-1-S1-AF5-MU1-WS', '']
+          ['Součinitel tepelné vodivosti λD – volně foukaná vrstva', '0,036 W/mK', 'ČSN EN 14064-1'],
+          ['Součinitel tepelné vodivosti λD – uzavřené dutiny', '0,034 W/mK', 'ČSN EN 14064-1'],
+          ['Třída reakce na oheň', 'A1 – nehořlavý', 'ČSN EN 13501-1'],
+          ['Doutnání', 'materiál nedoutná', 'ČSN EN 16733'],
+          ['Faktor difuzního odporu µ', '1 – difuzně otevřený', 'ČSN EN 12086'],
+          ['Sesedání', 'volně foukaná 10 % · v dutinách žádné (SC 0)', 'EN 15101-1'],
+          ['Odpor při proudění vzduchu', '≥ 10 kPa·s/m² volně · ≥ 20 kPa·s/m² v dutinách', 'ČSN EN 29053'],
+          ['Kvalita a ekologie', 'známka kvality RAL, ekoznačka Blauer Engel', ''],
+          ['Evropské technické posouzení', 'ETA-18/0889', '']
         ]
       },
       role: {
         nazev: 'DEKWOOL G 039r',
         typ: 'Skelná minerální vlna v rolích',
-        ceny: { '40 cm': 520, '30 cm': 490, '18 cm': 390 },
+        ceny: { '40 cm': 530, '30 cm': 500, '18 cm': 410 },
         lambda: { volne: 0.039, dutina: 0.039 },
         reakceNaOhen: 'A1',
         popis: 'Víceúčelová tepelná izolace ze skleněných minerálních vláken v rolích, určená do stropů a podlah. Je nehořlavá a difuzně otevřená. Role pokládáme ve více vrstvách s převazbou spár, aby nevznikaly tepelné mosty.',
@@ -107,10 +109,12 @@ window.NASTAVENI = {
       ohradka: { nazev: 'Ohrádka prostupu', jednotka: 'ks', cena: 800 }
     },
 
+    // {platnostDni} a {platnostDo} se v nabídce nahradí skutečnými hodnotami
     podminky: [
-      { nadpis: 'Bez zálohy', text: 'Nevybíráme žádné zálohy. Platba probíhá až po dokončení realizace a podpisu předávacího protokolu.' },
-      { nadpis: 'Konečná cena', text: 'Cena zahrnuje veškerý materiál, práci, dopravu a úklid pracoviště.' },
-      { nadpis: 'Garantovaná tloušťka', text: 'Tloušťku foukané izolace počítáme po přirozeném sesednutí materiálu. Aplikujeme více, abyste dostali zaplacenou vrstvu.' }
+      { nadpis: 'Bez zálohy', text: 'Nevybíráme zálohy. Platí se až po dokončení realizace a podpisu předávacího protokolu.' },
+      { nadpis: 'Konečná cena', text: 'Cena je konečná a zahrnuje materiál, práci, dopravu a úklid.' },
+      { nadpis: 'Tloušťka po sesednutí', text: 'Tloušťku izolace počítáme po sesednutí materiálu. Aplikujeme podle doporučení výrobce.' },
+      { nadpis: 'Platnost nabídky', text: 'Nabídka platí {platnostDni} dní, do {platnostDo}.' }
     ]
   },
 
@@ -135,16 +139,17 @@ window.NASTAVENI = {
     },
 
     platby: [
-      { procento: 50, text: 'Při dodání izolantu. Pokud na stavbě není místo na celé množství, dodáváme po etapách.' },
+      { procento: 50, text: 'Při dodání izolantu. Při nedostatku místa na stavbě dodáváme po etapách v průběhu realizace dle možností.' },
       { procento: 25, text: 'Po nalepení izolantu na všechny zateplované plochy.' },
       { procento: 25, text: 'Po dokončení prací a předání fasády.' }
     ],
 
     podminky: [
-      { nadpis: 'Lešení v ceně', text: 'Lešení zajišťujeme my a je součástí zakázky.' },
-      { nadpis: 'Výměry ploch', text: 'Plochy oken a dveří z výměr neodečítáme z důvodu zohlednění nákladovosti špalet.' },
-      { nadpis: 'Termín realizace', text: 'Konkrétní harmonogram upřesníme po potvrzení nabídky. Zateplovací práce závisí na počasí.' },
-      { nadpis: 'Odstín omítky', text: 'Finální odstín doporučujeme vybrat podle fyzického vzorníku.' }
+      { nadpis: 'Lešení v ceně', text: 'Lešení zajišťujeme my a je součástí ceny.' },
+      { nadpis: 'Výměry ploch', text: 'Plochy oken a dveří se neodečítají, protože cena zahrnuje zateplení špalet.' },
+      { nadpis: 'Termín realizace', text: 'Termín upřesníme po potvrzení nabídky, závisí na počasí. Standardně do 60 dní.' },
+      { nadpis: 'Odstín omítky', text: 'Odstín omítky se vybírá podle fyzického vzorníku a lze ho upřesnit i v průběhu realizace. Případné příplatkové odstíny doceňujeme.' },
+      { nadpis: 'Platnost nabídky', text: 'Nabídka platí {platnostDni} dní, do {platnostDo}.' }
     ]
   },
 

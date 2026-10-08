@@ -261,7 +261,7 @@
         content.push({
           stack: [
             h3('Technické parametry', { margin: [0, 16, 0, 8] }),
-            tabulka(['*', 170, 70], ['Parametr', 'Hodnota', 'Norma'],
+            tabulka(['*', 205, 66], ['Parametr', 'Hodnota', 'Norma'],
               mat.parametry.map(r => [r[0], { text: r[1], bold: true }, { text: r[2] || '', color: C.t3, fontSize: 8 }]),
               { align: [null, null, 'right'] }),
             { text: 'Údaje podle technického listu a prohlášení o vlastnostech výrobce.', fontSize: 7.6, color: C.t3, margin: [0, 6, 0, 0] }
@@ -269,7 +269,7 @@
         });
       }
 
-      content.push({ stack: [h3('Platební a dodací podmínky'), mrizka(f.podminky, 3, podminkaBlok, true)], unbreakable: true });
+      content.push({ stack: [h3('Platební a dodací podmínky'), mrizka(f.podminky, f.podminky.length === 4 ? 2 : 3, podminkaBlok, true)], unbreakable: true });
       if (f.poznamka) content.push(poznamka(f.poznamka));
     }
 
@@ -287,7 +287,7 @@
           p.tloustka ? 'EPS ' + p.tloustka * 10 + ' mm' : { text: 'neřešeno', color: C.t3 }
         ]).concat([[{ text: 'Celkem k zateplení', bold: true, colSpan: 2 }, '', { text: m2(s.vymera), bold: true }, '']]),
         { align: [null, null, 'right', 'right'] }));
-      content.push({ text: 'Plochy oken a dveří z výměr neodečítáme z důvodu zohlednění nákladovosti špalet.', fontSize: 8, color: C.t3, margin: [0, 6, 0, 0] });
+      content.push({ text: 'Plochy oken a dveří se neodečítají, protože cena zahrnuje zateplení špalet.', fontSize: 8, color: C.t3, margin: [0, 6, 0, 0] });
 
       // rozpočet
       const rows = s.skupiny.map(g => [
@@ -335,7 +335,7 @@
         ], unbreakable: true
       });
 
-      content.push({ stack: [h3('Další podmínky'), mrizka(N.fasada.podminky, 2, podminkaBlok)], unbreakable: true });
+      content.push({ stack: [h3('Další podmínky'), mrizka(s.podminky, 2, podminkaBlok)], unbreakable: true });
       if (s.poznamka) content.push(poznamka(s.poznamka));
     }
 
