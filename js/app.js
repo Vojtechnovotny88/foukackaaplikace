@@ -35,7 +35,7 @@
     const old = $('tloustka').value;
     fill($('tloustka'), Object.keys(mat.ceny).map(t => [t, t]));
     if (zachovat && mat.ceny[old] !== undefined) $('tloustka').value = old;
-    $('lblList').textContent = mat.technickyList ? '' : '(pro tento materiál zatím není k dispozici)';
+    $('lblList').textContent = mat.parametry && mat.parametry.length ? '' : '(pro tento materiál zatím nejsou doplněné)';
   }
   function obnovCenu() {
     const mat = N.foukana.materialy[$('material').value];
@@ -111,14 +111,18 @@
       const cenaM2 = zaklad + (plocha > 0 ? num(s.prirazka) / plocha : 0);
       const kon = { 'Půda': 'Zateplení půdy', 'Střecha': 'Zateplení střechy', 'Střecha mezi krokve': 'Zateplení střechy mezi krokvemi' };
       const nazevSluzby = kon[s.konstrukce] || 'Zateplení – ' + s.konstrukce.toLowerCase();
-      const radky = [{ nazev: nazevSluzby, sub: mat.nazev + ' (' + mat.typ.toLowerCase() + '), tloušťka ' + s.tloustka, mnozstvi: fmt2(plocha) + ' m²', cenaJ: cenaM2, celkem: Math.round(cenaM2 * plocha) }];
+      const radky = [{ nazev: nazevSluzby, sub: mat.nazev + ', tloušťka ' + s.tloustka, mnozstvi: fmt2(plocha) + ' m²', cenaJ: cenaM2, celkem: Math.round(cenaM2 * plocha) }];
       const lavka = num(s.lavka), zaklop = num(s.zaklop), ohr = num(s.ohradkaKs), ohrC = num(s.ohradkaCena);
       if (lavka > 0) radky.push({ nazev: P.lavka.nazev, mnozstvi: fmt2(lavka) + ' bm', cenaJ: P.lavka.cena, celkem: lavka * P.lavka.cena });
       if (zaklop > 0) radky.push({ nazev: P.zaklop.nazev, mnozstvi: fmt2(zaklop) + ' m²', cenaJ: P.zaklop.cena, celkem: zaklop * P.zaklop.cena });
       if (ohr > 0) radky.push({ nazev: P.ohradka.nazev, mnozstvi: fmt2(ohr) + ' ks', cenaJ: ohrC, celkem: ohr * ohrC });
       s.polozkyFoukana.filter(p => p.nazev.trim() && num(p.cena) > 0).forEach(p => radky.push({ nazev: p.nazev.trim(), mnozstvi: '1 soub.', cenaJ: num(p.cena), celkem: num(p.cena) }));
       const celkem = radky.reduce((a, r) => a + Math.round(r.celkem), 0);
-      d.foukana = { nazevSluzby, konstrukce: s.konstrukce, material: mat, materialKey: s.material, tloustka: s.tloustka, plocha, cenaM2, radky, celkem, podminky: N.foukana.podminky, poznamka: s.poznamkaFoukana.trim(), technickyList: s.technickyList && !!mat.technickyList };
+      const dutina = s.konstrukce === 'Střecha mezi krokve';
+      const lambda = mat.lambda ? (dutina ? mat.lambda.dutina : mat.lambda.volne) : null;
+      const tlM = parseFloat(String(s.tloustka).replace(',', '.')) / 100;
+      const odporR = lambda && tlM ? Math.round(tlM / lambda * 10) / 10 : null;
+      d.foukana = { nazevSluzby, konstrukce: s.konstrukce, material: mat, materialKey: s.material, tloustka: s.tloustka, plocha, cenaM2, radky, celkem, podminky: N.foukana.podminky, poznamka: s.poznamkaFoukana.trim(), technickeParametry: s.technickyList, dutina, lambda, odporR };
       d.celkem += celkem;
     }
 
@@ -226,16 +230,6 @@
     const def = window.sestavDokument(d, a);
     const buf = await new Promise((res, rej) => { try { pdfMake.createPdf(def).getBuffer(res); } catch (e) { rej(e); } });
     let bytes = new Uint8Array(buf);
-    if (d.foukana && d.foukana.technickyList) {
-      try {
-        const listBytes = await (await fetch(d.foukana.material.technickyList)).arrayBuffer();
-        const out = await PDFLib.PDFDocument.load(bytes);
-        const list = await PDFLib.PDFDocument.load(listBytes);
-        (await out.copyPages(list, list.getPageIndices())).forEach(p => out.addPage(p));
-        out.setTitle(def.info.title); out.setAuthor(def.info.author);
-        bytes = await out.save();
-      } catch (e) { console.warn('Technický list se nepodařilo připojit', e); }
-    }
     return { bytes, d };
   }
 

@@ -24,14 +24,16 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - `js/dokument.js` – vzhled PDF (pdfmake): úvodní tmavý blok, klíčová čísla, sekce služeb
 - `js/app.js` – formulář, výpočty, náhled (pdf.js), stažení PDF, odeslání do Make, historie
 - `assets/fonts` Manrope TTF · `assets/img` logo a fotky realizací (jen skutečné, ne AI) ·
-  `assets/listy` technické listy (Paroc BLT 9) · `assets/vendor` knihovny (pdfmake, pdf-lib, pdf.js) –
+  `assets/vendor` knihovny (pdfmake, pdf.js) –
   vše lokálně, žádné CDN.
 
 ## Jak to funguje
 - Služby se zaškrtávají: Foukaná izolace / Fasáda / obojí → podle toho se skládá dokument.
   Obojí = na 1. straně souhrn s celkovou cenou, každá služba pak od nové strany.
 - PDF je skutečné vektorové PDF (ostrý text), náhled vpravo je přesně to PDF.
-- Technický list materiálu se připojí na konec PDF přes pdf-lib (zaškrtávátko „Přiložit technický list“).
+- Místo přiloženého technického listu se v nabídce vypíše: 3 klíčové hodnoty (λD podle konstrukce, tepelný odpor
+  R = tloušťka/λD vypočtený pro zvolenou tloušťku, reakce na oheň) + tabulka technických parametrů z `nastaveni.js`.
+  Objemovou hmotnost do nabídek neuvádíme (přání Vojtěcha).
 - Fasáda: plochy (označení, popis, m², tloušťka 6–20 cm nebo „neřešeno“), rozpočet seskupený podle
   tloušťky, cena bez DPH / DPH 12 % / s DPH, systém Baumit, platby 50/25/25 % s částkami.
 - **Odeslat zákazníkovi** → JSON na Make webhook. Pole jako dřív: customerName, customerEmail,
@@ -55,8 +57,9 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 
 ## Otevřené otázky / úkoly
 - [ ] Vojtěch potvrdí ceny a podmínky (poslán seznam 8. 10.)
-- [ ] Technický list: přidává ho ostrá verze sama, nebo Make? (aby nebyl 2×)
-- [ ] Technické listy URSA a DEK (zatím nejsou)
+- [ ] URSA: parametry jsou zatím z prohlášení o vlastnostech URSA PURE FLOC KD – ověřit podle technického listu od Vojtěcha
+- [ ] Rolovaná vata DEK: zjistit konkrétní výrobek a doplnit parametry
+- [ ] Odesílání jednodušeji než přes Make – návrh poslán 8. 10., čeká na rozhodnutí
 - [ ] Ověřit odeslání přes Make s novou verzí (nová pole namapovat ve scénáři, pokud je chce)
 - [ ] Po schválení: sloučit `novy-design` do `main` a přepnout ostrou adresu
 - [ ] Webhook je ve veřejném repozitáři – zvážit soukromé repo / přegenerování webhooku
@@ -65,4 +68,5 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - 2026-04-01 – poslední úprava `main` před založením tohoto souboru
 - 2026-10-08 – založen CLAUDE.md
 - 2026-10-08 – větev `novy-design`: kompletně nová aplikace podle design systému, vektorové PDF,
-  fasády (plochy + tloušťky), kontakty podle webu, nové logo, záklop 690, poznámka, technický list
+  fasády (plochy + tloušťky), kontakty podle webu, nové logo, záklop 690, poznámka
+- 2026-10-08 – přiložený technický list nahrazen výpisem technických parametrů (Paroc kompletně, URSA prozatímně)

@@ -229,28 +229,45 @@
       content.push({ stack: zacatek, unbreakable: true, pageBreak: d.fasada ? 'before' : undefined, margin: [0, d.fasada ? 0 : 26, 0, 0] });
       content.push(celkem('Cena celkem vč. DPH', 'Materiál, práce, doprava a úklid pracoviště', f.celkem));
 
-      // materiál
-      const tiles = (mat.parametry || []).map(p => ({
-        width: 104,
-        table: {
-          widths: ['*'], body: [[{
-            stack: [
-              { text: [{ text: p.hodnota, fontSize: 17, bold: true, characterSpacing: -0.3 }, p.jednotka ? { text: ' ' + p.jednotka, fontSize: 8, bold: true, color: C.t2 } : ''] },
-              { text: p.popis, fontSize: 7.2, color: C.t2, margin: [0, 4, 0, 0] }
-            ]
-          }]]
-        },
-        layout: { fillColor: () => C.bg, hLineWidth: () => 0, vLineWidth: () => 0, paddingLeft: () => 10, paddingRight: () => 10, paddingTop: () => 10, paddingBottom: () => 10 }
-      }));
+      // materiál + technické parametry
+      const klic = [];
+      if (f.lambda) klic.push({ hodnota: f.lambda.toLocaleString('cs-CZ', { minimumFractionDigits: 3 }), jednotka: 'W/mK', popis: 'Součinitel tepelné vodivosti λD – ' + (f.dutina ? 'v dutině a šikmině' : 'volně foukaná vrstva') });
+      if (f.odporR) klic.push({ hodnota: f.odporR.toLocaleString('cs-CZ', { minimumFractionDigits: 1, maximumFractionDigits: 1 }), jednotka: 'm²K/W', popis: 'Tepelný odpor vrstvy ' + f.tloustka + ' (vypočteno R = d / λD)' });
+      if (mat.reakceNaOhen) klic.push({ hodnota: mat.reakceNaOhen, jednotka: '', popis: 'Třída reakce na oheň – nehořlavý materiál' });
+      const gapT = 10, wT = klic.length ? (CW - gapT * (klic.length - 1)) / klic.length : 0;
+      const tiles = klic.length ? {
+        columns: klic.map(p => ({
+          width: wT,
+          table: {
+            widths: ['*'], body: [[{
+              stack: [
+                { text: [{ text: p.hodnota, fontSize: 18, bold: true, characterSpacing: -0.3 }, p.jednotka ? { text: ' ' + p.jednotka, fontSize: 8.5, bold: true, color: C.t2 } : ''] },
+                { text: p.popis, fontSize: 7.4, color: C.t2, margin: [0, 4, 0, 0] }
+              ]
+            }]]
+          },
+          layout: { fillColor: () => C.bg, hLineWidth: () => 0, vLineWidth: () => 0, paddingLeft: () => 12, paddingRight: () => 12, paddingTop: () => 11, paddingBottom: () => 11 }
+        })), columnGap: gapT, margin: [0, 12, 0, 0]
+      } : null;
       content.push({
         stack: [
           h3('Materiál: ' + mat.nazev),
-          {
-            columns: [{ width: '*', stack: [label(mat.typ, C.t2, { margin: [0, 0, 0, 4] }), { text: mat.popis, color: C.t2 }].concat(f.technickyList ? [{ text: 'Technický list materiálu je přiložen na konci nabídky.', fontSize: 8, color: C.t3, margin: [0, 6, 0, 0] }] : []) }].concat(tiles),
-            columnGap: 10
-          }
-        ], unbreakable: true
+          label(mat.typ, C.t2, { margin: [0, 0, 0, 4] }),
+          { text: mat.popis, color: C.t2 },
+          tiles
+        ].filter(Boolean), unbreakable: true
       });
+      if (f.technickeParametry && mat.parametry && mat.parametry.length) {
+        content.push({
+          stack: [
+            h3('Technické parametry', { margin: [0, 16, 0, 8] }),
+            tabulka(['*', 170, 70], ['Parametr', 'Hodnota', 'Norma'],
+              mat.parametry.map(r => [r[0], { text: r[1], bold: true }, { text: r[2] || '', color: C.t3, fontSize: 8 }]),
+              { align: [null, null, 'right'] }),
+            { text: 'Údaje podle technického listu a prohlášení o vlastnostech výrobce.', fontSize: 7.6, color: C.t3, margin: [0, 6, 0, 0] }
+          ], unbreakable: true
+        });
+      }
 
       content.push({ stack: [h3('Platební a dodací podmínky'), mrizka(f.podminky, 3, podminkaBlok, true)], unbreakable: true });
       if (f.poznamka) content.push(poznamka(f.poznamka));

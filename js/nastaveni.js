@@ -32,36 +32,58 @@ window.NASTAVENI = {
   foukana: {
     konstrukce: ['Půda', 'Střecha', 'Střecha mezi krokve'],
 
+    /* Technické parametry materiálů (vypisují se do nabídky).
+       lambda.volne = λD pro volně foukanou vrstvu na strop/půdu,
+       lambda.dutina = λD v uzavřené dutině / šikmině (použije se u „Střecha mezi krokve“).
+       Tepelný odpor R se v nabídce dopočítá pro zvolenou tloušťku: R = tloušťka / λD.
+       Objemovou hmotnost do nabídek záměrně neuvádíme. */
     materialy: {
       paroc: {
         nazev: 'Paroc BLT 9',
-        typ: 'Kamenná minerální vlna',
+        typ: 'Kamenná minerální vlna – granulát pro foukání',
         ceny: { '40 cm': 399, '30 cm': 379, '25 cm': 369, '20 cm': 359 },
-        parametry: [
-          { hodnota: '0,037', jednotka: 'W/mK', popis: 'Součinitel tepelné vodivosti λD (volně foukaná)' },
-          { hodnota: 'A1', jednotka: '', popis: 'Třída reakce na oheň – nehořlavý materiál' }
-        ],
+        lambda: { volne: 0.037, dutina: 0.034 },
+        reakceNaOhen: 'A1',
         popis: 'Kamenná minerální izolace ve formě granulátu. Je nehořlavá, v průběhu let nedegraduje, nemění své vlastnosti a drží stabilní objem. Dobře tlumí hluk a je difuzně otevřená, takže chrání konstrukci před vlhkostí.',
-        technickyList: 'assets/listy/paroc-blt9.pdf'
+        parametry: [
+          ['Součinitel tepelné vodivosti λD – volně foukaná vrstva', '0,037 W/mK', 'EN 12667'],
+          ['Součinitel tepelné vodivosti λD – v dutině a šikmině', '0,034 W/mK', 'EN 12667'],
+          ['Třída reakce na oheň', 'A1 – nehořlavý', 'EN 13501-1'],
+          ['Hořlavost', 'nehořlavý', 'EN ISO 1182'],
+          ['Teplota tání vláken', 'přes 1 000 °C', ''],
+          ['Faktor difuzního odporu µ', '1 – difuzně otevřený', 'EN 12086'],
+          ['Třída sesedání', 'S2 volně foukaná · S1 v dutině', 'EN 14064-1'],
+          ['Stálost vlastností', 'tepelná vodivost ani požární vlastnosti se časem nemění', ''],
+          ['Označení výrobku', 'MW-EN14064-1-S1-MU1 / S2-MU1', ''],
+          ['Certifikát', '0809-CPR-1014 (VTT Expert Services)', '']
+        ]
       },
       ursa: {
         nazev: 'URSA Pure Floc',
-        typ: 'Skelná minerální vlna',
+        typ: 'Skelná minerální vlna – granulát pro foukání',
         ceny: { '40 cm': 570, '30 cm': 550, '25 cm': 540, '20 cm': 530 },
-        parametry: [
-          { hodnota: '0,034', jednotka: 'W/mK', popis: 'Součinitel tepelné vodivosti λ (až)' },
-          { hodnota: 'A1', jednotka: '', popis: 'Třída reakce na oheň – nehořlavý materiál' }
-        ],
+        lambda: { volne: 0.034, dutina: 0.034 },
+        reakceNaOhen: 'A1',
         popis: 'Minerální izolace na bázi skla se známkou kvality RAL. Je lehká, dobře propouští vodní páru a vyplní i malé dutiny v konstrukci.',
-        technickyList: null
+        // PROZATÍMNÍ hodnoty z prohlášení o vlastnostech URSA PURE FLOC KD – ověřit podle technického listu od Vojtěcha
+        parametry: [
+          ['Součinitel tepelné vodivosti λD', '0,034 W/mK', 'EN 12667'],
+          ['Třída reakce na oheň', 'A1 – nehořlavý', 'EN 13501-1'],
+          ['Doutnání', 'nedoutná', 'EN 14064-1'],
+          ['Faktor difuzního odporu µ', '1 – difuzně otevřený (MU1)', 'EN 12086'],
+          ['Třída sesedání', 'S1', 'EN 14064-1'],
+          ['Odpor proti proudění vzduchu', 'AF5', 'EN 29053'],
+          ['Označení výrobku', 'MW-EN14064-1-S1-AF5-MU1-WS', '']
+        ]
       },
       role: {
         nazev: 'Rolovaná vata DEK',
         typ: 'Minerální vlna v rolích',
         ceny: { '40 cm': 520, '30 cm': 490, '18 cm': 390 },
-        parametry: [],
+        lambda: null,                 // doplnit podle konkrétního výrobku
+        reakceNaOhen: null,
         popis: 'Izolace z minerální vlny určená pro pokládku. Je nehořlavá a difuzně otevřená. Pečlivá pokládka bez mezer omezuje tepelné mosty.',
-        technickyList: null
+        parametry: []
       }
     },
 
