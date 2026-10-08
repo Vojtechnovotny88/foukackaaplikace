@@ -127,15 +127,27 @@ window.NASTAVENI = {
     ceny: { 6: 2240, 8: 2270, 10: 2300, 12: 2340, 14: 2370, 16: 2400, 18: 2450, 20: 2500 }, // Kč/m² vč. DPH
 
     system: {
-      uvod: 'Fasádu zateplíme kontaktním zateplovacím systémem Baumit (ETICS) s izolantem z expandovaného polystyrenu. Lepidlo, izolant, kotvy, výztužná vrstva i omítka jsou navzájem sladěné a pochází od jednoho výrobce. Systém je certifikovaný podle evropských pravidel pro zateplovací systémy a provádí se podle české normy pro provádění ETICS.',
+      uvod: 'Fasádu zateplíme kontaktním zateplovacím systémem Baumit (ETICS) s izolantem z expandovaného polystyrenu. Cena zahrnuje finální silikonovou omítku Baumit SilikonTop. Lepidlo, izolant, kotvy, výztužná vrstva i omítka jsou navzájem sladěné a pochází od jednoho výrobce. Systém je certifikovaný podle evropských pravidel pro zateplovací systémy a provádí se podle české normy pro provádění ETICS.',
       vrstvy: [
         { nazev: 'Lepicí hmota', text: 'Desky izolantu se celoplošně lepí na připravený podklad.' },
         { nazev: 'Izolant z EPS', text: 'Fasádní polystyren v tloušťce podle rozpočtu.' },
         { nazev: 'Kotvení', text: 'Desky se kromě lepení mechanicky ukotví talířovými hmoždinkami.' },
         { nazev: 'Výztužná vrstva', text: 'Stěrková hmota se sklotextilní síťovinou, rohové a připojovací profily.' },
         { nazev: 'Penetrace', text: 'Základní nátěr sjednotí podklad pod finální omítku.' },
-        { nazev: 'Fasádní omítka', text: 'Probarvená omítka ve zvoleném odstínu.' }
-      ]
+        { nazev: 'Omítka Baumit SilikonTop', text: 'Probarvená silikonová omítka ve zvoleném odstínu ze vzorníku Baumit Life.' }
+      ],
+      // finální omítka započtená v ceně – zdroj: technický list Baumit SilikonTop
+      omitka: {
+        nazev: 'Baumit SilikonTop',
+        popis: 'Tenkovrstvá silikonová omítka, systémová součást zateplovacích systémů Baumit. Je vysoce vodoodpudivá, a přitom paropropustná, takže fasáda dobře odolává dešti a znečištění a zůstává déle čistá.',
+        parametry: [
+          ['Typ', 'tenkovrstvá pastovitá silikonová omítka', 'ČSN EN 15824'],
+          ['Vlastnosti', 'vysoce vodoodpudivá, paropropustná, omyvatelná, odolná znečištění a povětrnostním vlivům', ''],
+          ['Faktor difuzního odporu µ', 'cca 40–60', ''],
+          ['Struktura a zrnitost', 'škrábaná K 1,5 / K 2 / K 3 · rýhovaná R 2 / R 3', ''],
+          ['Odstíny', 'vzorník Baumit Life', '']
+        ]
+      }
     },
 
     platby: [

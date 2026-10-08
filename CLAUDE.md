@@ -12,7 +12,8 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 
 ## Nasazení
 - **Hlavní adresa (od 8. 10. 2026):** https://nabidky-efekt-izolace.netlify.app – Netlify projekt
-  `nabidky-efekt-izolace`, nahrává se ručně přetažením složky (Deploys → drag & drop).
+  `nabidky-efekt-izolace`, **napojený na GitHub (větev `main`)** – každý push do `main` se nasadí automaticky.
+  Žádné zipy ani drag & drop.
 - **Stará verze:** https://strong-tartufo-12ad44.netlify.app – už se nepoužívá, kód není na GitHubu.
 - **GitHub:** Vojtechnovotny88/foukackaaplikace
   - `main` = aktuální verze (od 8. 10. 2026 = nový design); `novy-design` sloučena do `main`
@@ -34,7 +35,8 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - Místo přiloženého technického listu se v nabídce vypíše: 3 klíčové hodnoty (λD podle konstrukce, tepelný odpor
   R = tloušťka/λD vypočtený pro zvolenou tloušťku, reakce na oheň) + tabulka technických parametrů z `nastaveni.js`.
   Objemovou hmotnost do nabídek neuvádíme (přání Vojtěcha).
-- Fasáda: plochy (označení, popis, m², tloušťka 6–20 cm nebo „neřešeno“), rozpočet seskupený podle
+- Fasáda: v ceně je finální silikonová omítka **Baumit SilikonTop** (popis + parametry v nabídce, `nastaveni.js` → fasada.system.omitka).
+  Plochy (označení, popis, m², tloušťka 6–20 cm nebo „neřešeno“), rozpočet seskupený podle
   tloušťky, cena bez DPH / DPH 12 % / s DPH, systém Baumit, platby 50/25/25 % s částkami.
 - **Odeslat zákazníkovi** → JSON na Make webhook. Pole jako dřív: customerName, customerEmail,
   customerAddress, constructionType, material, thickness, areaM2, totalPrice, offerNumber, validUntil,
@@ -74,4 +76,5 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - 2026-10-08 – přiložený technický list nahrazen výpisem technických parametrů (Paroc kompletně, URSA prozatímně)
 - 2026-10-08 – nasazeno na nabidky-efekt-izolace.netlify.app, Make přemapován na emailSubject/emailBody,
   `novy-design` sloučena do `main`
+- 2026-10-08 – Netlify napojen na GitHub (auto-deploy z `main`); fasáda: omítka Baumit SilikonTop v ceně
 - 2026-10-08 – nové ceny foukané izolace, nové podmínky, URSA podle technického listu, DEKWOOL G 039r

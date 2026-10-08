@@ -209,7 +209,7 @@
           h3('Souhrn nabídky', { margin: [0, 18, 0, 6] }),
           tabulka(['*', 90, 100], ['Služba', 'Rozsah', 'Cena vč. DPH'], [
             [{ stack: [{ text: d.foukana.nazevSluzby, bold: true }, { text: d.foukana.material.nazev + ', ' + d.foukana.tloustka, color: C.t2, fontSize: 8.5 }] }, m2(d.foukana.plocha), { text: kc(d.foukana.celkem), bold: true }],
-            [{ stack: [{ text: 'Zateplení fasády', bold: true }, { text: 'Baumit ETICS, EPS ' + d.fasada.rozsahTloustek + ' cm', color: C.t2, fontSize: 8.5 }] }, m2(d.fasada.vymera), { text: kc(d.fasada.celkem), bold: true }]
+            [{ stack: [{ text: 'Zateplení fasády', bold: true }, { text: 'Baumit ETICS, EPS ' + d.fasada.rozsahTloustek + ' cm, omítka SilikonTop', color: C.t2, fontSize: 8.5 }] }, m2(d.fasada.vymera), { text: kc(d.fasada.celkem), bold: true }]
           ], { align: [null, 'right', 'right'] }),
           celkem('Cena celkem vč. DPH', 'Podrobný rozpis a podmínky najdete u jednotlivých služeb.', d.celkem)
         ], unbreakable: true
@@ -302,7 +302,7 @@
           tabulka(['*', 90, 70, 86], ['Položka', 'Plochy', 'Výměra', 'Cena vč. DPH'], rows, { align: [null, null, 'right', 'right'] })
         ], unbreakable: true
       });
-      content.push(celkem('Cena fasády celkem vč. DPH', 'Včetně lešení', s.celkem));
+      content.push(celkem('Cena fasády celkem vč. DPH', 'Včetně lešení a silikonové omítky Baumit SilikonTop', s.celkem));
       if (s.neresene) content.push({ text: 'Plochy mimo rozpočet (neřešeno): ' + s.neresene + '.', fontSize: 8, color: C.t3, margin: [0, 6, 0, 0] });
 
       const info = [];
@@ -320,6 +320,17 @@
             { text: v.nazev, bold: true, fontSize: 9.5, margin: [0, 0, 0, 2] },
             { text: v.text, fontSize: 8.2, color: C.t2 }
           ])
+        ], unbreakable: true
+      });
+
+      // finální omítka
+      const om = N.fasada.system.omitka;
+      if (om) content.push({
+        stack: [
+          h3('Finální omítka: ' + om.nazev),
+          { text: om.popis, color: C.t2, margin: [0, 0, 0, 10] },
+          tabulka(['*', 245, 66], ['Parametr', 'Hodnota', 'Norma'],
+            om.parametry.map(r => [r[0], { text: r[1], bold: true }, { text: r[2] || '', color: C.t3, fontSize: 8 }]), { align: [null, null, 'right'] })
         ], unbreakable: true
       });
 

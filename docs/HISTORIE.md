@@ -45,6 +45,8 @@ Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v
 - [x] Nová verze nasazena na https://nabidky-efekt-izolace.netlify.app (8. 10.)
 - [x] Make: modul Gmail přemapován na `{{1.emailSubject}}` a `{{1.emailBody}}` (8. 10.)
 - [x] Záloha: nová verze sloučena do hlavní větve `main` na GitHubu (8. 10.)
+- [x] Netlify napojen na GitHub – každá změna se nasadí sama (8. 10.)
+- [x] Fasáda: v nabídce uvedeno, že cena zahrnuje silikonovou omítku Baumit SilikonTop, včetně jejích parametrů (8. 10.)
 - [ ] Zkušební odeslání na vlastní e-mail
 
 ## Plán – další kroky
@@ -59,4 +61,3 @@ Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v
 
 ### Další nápady (nerozhodnuto)
 - Webhook adresa je ve veřejném repozitáři – zvážit soukromý repozitář nebo nový webhook v Make.
-- Propojit Netlify s GitHubem → každá úprava se nasadí sama, bez přetahování zipu.
