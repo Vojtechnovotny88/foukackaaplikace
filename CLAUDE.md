@@ -11,12 +11,13 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - Vizuál vždy podle `docs/DESIGN-SYSTEM.md` (zdroj pravdy pro barvy, písmo, rozvržení).
 
 ## Nasazení
-- **Ostrá (stará) verze:** https://strong-tartufo-12ad44.netlify.app – nahrávaná ručně na Netlify.
-  Její kód NENÍ na GitHubu (má navíc pole Poznámka, záklop 690 Kč, jiné ceny materiálů).
+- **Hlavní adresa (od 8. 10. 2026):** https://nabidky-efektivni-izolace.netlify.app – Netlify projekt
+  `nabidky-efektivni-izolace`, nahrává se ručně přetažením složky (Deploys → drag & drop).
+- **Stará verze:** https://strong-tartufo-12ad44.netlify.app – už se nepoužívá, kód není na GitHubu.
 - **GitHub:** Vojtechnovotny88/foukackaaplikace
   - `main` = starší verze z dubna 2026 (bez poznámky)
-  - `novy-design` = nová verze (tento soubor), čeká na schválení
-- Nová verze: zkušební adresa na Netlify – viz Historie změn.
+  - `novy-design` = nová verze; po Vojtěchově potvrzení sloučit do `main`
+- Historie a plán srozumitelně pro Vojtěcha: `docs/HISTORIE.md` – udržovat aktuální spolu s tímto souborem.
 
 ## Struktura (větev novy-design)
 - `index.html` – formulář a náhled (CSS přímo v souboru, tokeny z design systému)
@@ -64,7 +65,8 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 ## Otevřené otázky / úkoly
 - [ ] Make: v modulu Gmail přemapovat Subject → {{1.emailSubject}} a text → {{1.emailBody}} (nebo aspoň opravit telefon v textu)
 - [ ] Ověřit odeslání přes Make s novou verzí (na vlastní e-mail)
-- [ ] Po schválení: sloučit `novy-design` do `main` a přepnout ostrou adresu
+- [ ] Po potvrzení od Vojtěcha (nasazeno + Make upraven): sloučit `novy-design` do `main`
+- [ ] Další fáze: víc fotek z realizací (sjednocený tón, jen autentické), logo Baumit u fasády – viz docs/HISTORIE.md
 - [ ] Webhook je ve veřejném repozitáři – zvážit soukromé repo / přegenerování webhooku
 
 ## Historie změn
