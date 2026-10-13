@@ -41,7 +41,10 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
   - rozpočet se sloupcem cena za m² → bez DPH / DPH 12 % / celkem
   - „Co je součástí realizace“ (`fasada.soucastRealizace`, `ukazat:false` = čeká na potvrzení)
   - „Není-li uvedeno jinak, nabídka nezahrnuje“ – jen zaškrtnuté výluky ve formuláři + vlastní řádky
-  - skladba 01–06 jako horizontální proces; text systému BEZ tvrzení „vše od jednoho výrobce“ / certifikace (čeká na potvrzení)
+  - skladba 01–06 jako horizontální proces; ETICS „s materiály Baumit“ – EPS je od jiného výrobce (λ 0,031 W/mK),
+    proto NIKDY „vše od jednoho výrobce“ ani certifikovaný systém (potvrzeno 13. 10.)
+  - příprava podkladu se do nabídky záměrně NEUVÁDÍ (Vojtěch: ošemetné); „standardně do 60 dní“ zrušeno
+  - ceny počítají s omítkou SilikonTop, struktura K 1,5 (výchozí ve formuláři); odstíny mimo SilikonTop = jiný odstín nebo doplatek
   - Baumit SilikonTop = jen finální omítka (nikdy „systém SilikonTop“); výhody + parametry z oficiálního technického listu 02/2020
   - výběr odstínu + klikací oficiální odkazy Baumit (`fasada.odkazy`), struktura a odstín z formuláře
   - termín realizace = jediný zdroj (pole Termín, jinak `fasada.texty.terminObecny`), vypisuje se jen v Dalších podmínkách
@@ -76,7 +79,7 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 
 ## Otevřené otázky / úkoly
 - [ ] Ověřit odeslání přes Make s novou verzí (na vlastní e-mail)
-- [ ] Fasáda – čeká na Vojtěcha: je to celý systém Baumit (i EPS a kotvy)? certifikace systému? příprava podkladu a úklid v ceně? „standardně do 60 dní“ ano/ne?
+- [ ] Fasáda: závěrečný úklid – zatím skrytý (`ukazat:false`), nepotvrzeno
 - [ ] Další fáze: víc fotek z realizací (sjednocený tón, jen autentické), logo Baumit u fasády – viz docs/HISTORIE.md
 - [ ] Webhook je ve veřejném repozitáři – zvážit soukromé repo / přegenerování webhooku
 
@@ -89,5 +92,6 @@ Tento soubor je „paměť projektu“: kdo na projektu pracuje (Claude v chatu,
 - 2026-10-08 – nasazeno na nabidky-efekt-izolace.netlify.app, Make přemapován na emailSubject/emailBody,
   `novy-design` sloučena do `main`
 - 2026-10-08 – Netlify napojen na GitHub (auto-deploy z `main`); fasáda: omítka Baumit SilikonTop v ceně
+- 2026-10-13 – fasáda: EPS λ 0,031, text o odstínech mimo SilikonTop, výchozí K 1,5, bez přípravy podkladu a 60 dní
 - 2026-10-13 – přepracovaná šablona fasádní nabídky (cena za m², co je v ceně, výluky, skladba, SilikonTop, odkazy Baumit, termín z jednoho zdroje, kontrola výpočtů)
 - 2026-10-08 – nové ceny foukané izolace, nové podmínky, URSA podle technického listu, DEKWOOL G 039r

@@ -403,7 +403,7 @@
             label('Výběr odstínu', C.t2),
             vybrano ? { text: [{ text: 'Zvoleno: ', color: C.t2 }, { text: vybrano, bold: true }], margin: [0, 5, 0, 0] } : '',
             { text: S.texty.odstin, margin: [0, 5, 0, 0] },
-            { text: S.texty.odstinPriplatek, fontSize: 8, color: C.t2, margin: [0, 4, 0, 10] },
+            { text: S.texty.odstinPriplatek, fontSize: 8.2, color: C.t2, margin: [0, 5, 0, 10] },
             { columns: [odkaz(S.odkazy.silikonTop.text, S.odkazy.silikonTop.url, { width: 'auto' }), odkaz(S.odkazy.baumitLife.text, S.odkazy.baumitLife.url, { width: 'auto' })], columnGap: 22 }
           ]
         }]] },

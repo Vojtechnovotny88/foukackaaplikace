@@ -128,10 +128,10 @@ window.NASTAVENI = {
 
     system: {
       // Pozn.: netvrdíme „vše od jednoho výrobce“ ani konkrétní certifikovaný systém, dokud to Vojtěch nepotvrdí.
-      uvod: 'Fasádu zateplíme kontaktním zateplovacím systémem (ETICS) Baumit s izolantem z fasádního polystyrenu (EPS) a finální silikonovou omítkou Baumit SilikonTop. Jednotlivé vrstvy na sebe navazují a teprve společně tvoří funkční fasádu, která chrání dům před únikem tepla i před povětrnostními vlivy. Zateplení provádíme podle české normy pro provádění ETICS (ČSN 73 2901).',
+      uvod: 'Fasádu zateplíme kontaktním zateplovacím systémem (ETICS) s materiály Baumit a finální silikonovou omítkou Baumit SilikonTop. Jako tepelný izolant používáme fasádní polystyren EPS se součinitelem tepelné vodivosti λ 0,031 W/mK. Jednotlivé vrstvy na sebe navazují a teprve společně tvoří funkční fasádu, která chrání dům před únikem tepla i před povětrnostními vlivy. Zateplení provádíme podle české normy pro provádění ETICS (ČSN 73 2901).',
       vrstvy: [
         { nazev: 'Lepicí hmota', text: 'Desky izolantu lepíme na připravený podklad.' },
-        { nazev: 'Izolant EPS', text: 'Fasádní polystyren v tloušťce podle rozpočtu – hlavní tepelně izolační vrstva.' },
+        { nazev: 'Izolant EPS', text: 'Fasádní polystyren s λ 0,031 W/mK v tloušťce podle rozpočtu – hlavní tepelně izolační vrstva.' },
         { nazev: 'Kotvení', text: 'Desky navíc mechanicky ukotvíme talířovými hmoždinkami.' },
         { nazev: 'Výztužná vrstva', text: 'Stěrka se sklotextilní síťovinou zpevní povrch. Rohy a napojení chrání systémové profily.' },
         { nazev: 'Penetrace', text: 'Sjednotí podklad a připraví ho pro finální omítku.' },
@@ -156,7 +156,8 @@ window.NASTAVENI = {
           ['Struktura a zrnitost', 'škrábaná K 1,5 / K 2 / K 3 · rýhovaná R 2 / R 3', ''],
           ['Odstíny', 'vybrané odstíny vzorníku Baumit Life', '']
         ],
-        struktury: ['K 1,5', 'K 2', 'K 3', 'R 2', 'R 3']
+        struktury: ['K 1,5', 'K 2', 'K 3', 'R 2', 'R 3'],
+        vychoziStruktura: 'K 1,5'   // s touto strukturou počítají ceny
       }
     },
 
@@ -172,7 +173,7 @@ window.NASTAVENI = {
     // „Co je součástí realizace“ – ukazat: false = čeká na potvrzení od Vojtěcha, v nabídce se nezobrazí
     soucastRealizace: [
       { text: 'Lepení desek tepelného izolantu', ukazat: true },
-      { text: 'Fasádní izolant EPS v tloušťce podle rozpočtu', ukazat: true },
+      { text: 'Fasádní izolant EPS (λ 0,031 W/mK) v tloušťce podle rozpočtu', ukazat: true },
       { text: 'Mechanické kotvení talířovými hmoždinkami', ukazat: true },
       { text: 'Zateplení ostění a detailů kolem oken a dveří', ukazat: true },
       { text: 'Rohové a připojovací systémové profily', ukazat: true },
@@ -181,8 +182,7 @@ window.NASTAVENI = {
       { text: 'Finální silikonová omítka Baumit SilikonTop', ukazat: true },
       { text: 'Lešení', ukazat: true },
       { text: 'Doprava materiálu', ukazat: true },
-      { text: 'Příprava podkladu pro zateplení', ukazat: false },   // TODO ověřit rozsah
-      { text: 'Závěrečný úklid pracoviště', ukazat: false }          // TODO ověřit
+      { text: 'Závěrečný úklid pracoviště', ukazat: false }          // TODO ověřit (příprava podkladu se záměrně neuvádí)
     ],
 
     // Typické výluky – ve formuláři se zaškrtávají podle konkrétní zakázky (výchozí: nic)
@@ -197,8 +197,8 @@ window.NASTAVENI = {
     texty: {
       vymera: 'Výměra je stanovena z celkových fasádních ploch bez odečtu stavebních otvorů. Tento způsob kalkulace zohledňuje zvýšenou pracnost detailů kolem oken a dveří, včetně zateplení ostění a souvisejících dokončovacích prací.',
       terminObecny: 'Předpokládaný termín zahájení realizace stanovíme po potvrzení nabídky s ohledem na aktuální kapacity a vhodné klimatické podmínky.',
-      odstin: 'Odstín finální omítky vyberete ze vzorníku Baumit Life. Pro SilikonTop jsou k dispozici vybrané odstíny vzorníku a finální odstín doporučujeme potvrdit podle fyzického vzorníku.',
-      odstinPriplatek: 'Některé odstíny mohou být příplatkové. Jejich případný cenový rozdíl upřesníme před objednáním materiálu.'
+      odstin: 'Odstín finální omítky vyberete ze vzorníku Baumit Life. Finální odstín doporučujeme potvrdit podle fyzického vzorníku.',
+      odstinPriplatek: 'Ceny jsou kalkulovány s omítkou Baumit SilikonTop. Některé odstíny vzorníku Baumit Life se v této omítce nevyrábějí a jsou dostupné jen v jiném typu omítky. V takovém případě můžete zvolit jiný odstín, nebo Vám spočítáme případný doplatek. Případný cenový rozdíl u příplatkových odstínů upřesníme vždy před objednáním materiálu.'
     },
 
     platby: [

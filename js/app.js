@@ -410,7 +410,7 @@
   /* ---------- start ---------- */
   function vychozi() {
     const m = Object.keys(N.foukana.materialy)[0], t = Object.keys(N.foukana.materialy[m].ceny)[0];
-    return { jmeno: '', adresa: '', email: '', telefon: '', konstrukce: N.foukana.konstrukce[0], material: m, tloustka: t, cenaM2: N.foukana.materialy[m].ceny[t], plocha: 100, lavka: 0, zaklop: 0, ohradkaKs: 0, ohradkaCena: N.foukana.priplatky.ohradka.cena, prirazka: 0, poznamkaFoukana: '', vychoziTloustka: N.fasada.vychoziTloustka, odstin: '', strukturaOmitky: '', termin: '', vylukyVlastni: '', vyluky: [], uvodFasada: '', poznamkaFasada: '', platnost: N.platnostDni, uvod: N.texty.uvod, sFoukana: true, sFasada: false, technickyList: true, realizace: true, polozkyFoukana: [], polozkyFasada: [], plochy: [] };
+    return { jmeno: '', adresa: '', email: '', telefon: '', konstrukce: N.foukana.konstrukce[0], material: m, tloustka: t, cenaM2: N.foukana.materialy[m].ceny[t], plocha: 100, lavka: 0, zaklop: 0, ohradkaKs: 0, ohradkaCena: N.foukana.priplatky.ohradka.cena, prirazka: 0, poznamkaFoukana: '', vychoziTloustka: N.fasada.vychoziTloustka, odstin: '', strukturaOmitky: N.fasada.system.omitka.vychoziStruktura || '', termin: '', vylukyVlastni: '', vyluky: [], uvodFasada: '', poznamkaFasada: '', platnost: N.platnostDni, uvod: N.texty.uvod, sFoukana: true, sFasada: false, technickyList: true, realizace: true, polozkyFoukana: [], polozkyFasada: [], plochy: [] };
   }
   noveCislo();
   zapisStav(vychozi());

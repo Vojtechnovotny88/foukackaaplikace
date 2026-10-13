@@ -48,6 +48,7 @@ Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v
 - Termín realizace z jednoho místa (už nemůže být v nabídce dvakrát jinak).
 - Závěr „Další postup“ s klikacím telefonem, e-mailem a webem.
 - Automatická kontrola výpočtů před stažením a odesláním.
+- Doplněno podle Vojtěcha: EPS od jiného výrobce s λ 0,031 W/mK (bez tvrzení „vše od Baumitu“), ceny jsou počítané s omítkou SilikonTop ve struktuře K 1,5, u odstínů dostupných jen v jiné omítce se volí jiný odstín nebo doplatek, příprava podkladu se neuvádí, „standardně do 60 dní“ zrušeno.
 
 ---
 
@@ -59,7 +60,8 @@ Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v
 - [x] Netlify napojen na GitHub – každá změna se nasadí sama (8. 10.)
 - [x] Fasáda: v nabídce uvedeno, že cena zahrnuje silikonovou omítku Baumit SilikonTop, včetně jejích parametrů (8. 10.)
 - [ ] Zkušební odeslání na vlastní e-mail
-- [ ] Fasáda – potvrdit: celý systém Baumit? certifikace? příprava podkladu a úklid v ceně? „standardně do 60 dní“?
+- [x] Fasáda – upřesnění od Vojtěcha zapracováno (13. 10.)
+- [ ] Fasáda – závěrečný úklid v ceně? (zatím se neuvádí)
 
 ## Plán – další kroky
 
