@@ -127,27 +127,78 @@ window.NASTAVENI = {
     ceny: { 6: 2240, 8: 2270, 10: 2300, 12: 2340, 14: 2370, 16: 2400, 18: 2450, 20: 2500 }, // Kč/m² vč. DPH
 
     system: {
-      uvod: 'Fasádu zateplíme kontaktním zateplovacím systémem Baumit (ETICS) s izolantem z expandovaného polystyrenu. Cena zahrnuje finální silikonovou omítku Baumit SilikonTop. Lepidlo, izolant, kotvy, výztužná vrstva i omítka jsou navzájem sladěné a pochází od jednoho výrobce. Systém je certifikovaný podle evropských pravidel pro zateplovací systémy a provádí se podle české normy pro provádění ETICS.',
+      // Pozn.: netvrdíme „vše od jednoho výrobce“ ani konkrétní certifikovaný systém, dokud to Vojtěch nepotvrdí.
+      uvod: 'Fasádu zateplíme kontaktním zateplovacím systémem (ETICS) Baumit s izolantem z fasádního polystyrenu (EPS) a finální silikonovou omítkou Baumit SilikonTop. Jednotlivé vrstvy na sebe navazují a teprve společně tvoří funkční fasádu, která chrání dům před únikem tepla i před povětrnostními vlivy. Zateplení provádíme podle české normy pro provádění ETICS (ČSN 73 2901).',
       vrstvy: [
-        { nazev: 'Lepicí hmota', text: 'Desky izolantu se celoplošně lepí na připravený podklad.' },
-        { nazev: 'Izolant z EPS', text: 'Fasádní polystyren v tloušťce podle rozpočtu.' },
-        { nazev: 'Kotvení', text: 'Desky se kromě lepení mechanicky ukotví talířovými hmoždinkami.' },
-        { nazev: 'Výztužná vrstva', text: 'Stěrková hmota se sklotextilní síťovinou, rohové a připojovací profily.' },
-        { nazev: 'Penetrace', text: 'Základní nátěr sjednotí podklad pod finální omítku.' },
-        { nazev: 'Omítka Baumit SilikonTop', text: 'Probarvená silikonová omítka ve zvoleném odstínu ze vzorníku Baumit Life.' }
+        { nazev: 'Lepicí hmota', text: 'Desky izolantu lepíme na připravený podklad.' },
+        { nazev: 'Izolant EPS', text: 'Fasádní polystyren v tloušťce podle rozpočtu – hlavní tepelně izolační vrstva.' },
+        { nazev: 'Kotvení', text: 'Desky navíc mechanicky ukotvíme talířovými hmoždinkami.' },
+        { nazev: 'Výztužná vrstva', text: 'Stěrka se sklotextilní síťovinou zpevní povrch. Rohy a napojení chrání systémové profily.' },
+        { nazev: 'Penetrace', text: 'Sjednotí podklad a připraví ho pro finální omítku.' },
+        { nazev: 'Omítka SilikonTop', text: 'Probarvená silikonová omítka ve zvoleném odstínu – ochrana a finální vzhled fasády.' }
       ],
-      // finální omítka započtená v ceně – zdroj: technický list Baumit SilikonTop
+
+      // finální omítka započtená v ceně – zdroj: oficiální technický list Baumit SilikonTop (02/2020)
       omitka: {
         nazev: 'Baumit SilikonTop',
-        popis: 'Tenkovrstvá silikonová omítka, systémová součást zateplovacích systémů Baumit. Je vysoce vodoodpudivá, a přitom paropropustná, takže fasáda dobře odolává dešti a znečištění a zůstává déle čistá.',
+        popis: 'Moderní silikonová omítka určená pro dlouhodobou ochranu fasády před povětrnostními vlivy. Je systémovou součástí zateplovacích systémů Baumit.',
+        vyhody: [
+          { nazev: 'Vysoká vodoodpudivost', text: 'Pomáhá chránit povrch fasády před působením dešťové vody.' },
+          { nazev: 'Paropropustnost', text: 'Umožňuje prostup vodních par a podporuje správné fungování skladby fasády.' },
+          { nazev: 'Odolnost vůči povětrnostním vlivům a znečištění', text: 'Pomáhá fasádě dlouhodobě zachovat kvalitní vzhled.' },
+          { nazev: 'Barevné možnosti Baumit Life', text: 'Široká nabídka odstínů umožňuje přizpůsobit vzhled fasády konkrétnímu domu.' }
+        ],
         parametry: [
           ['Typ', 'tenkovrstvá pastovitá silikonová omítka', 'ČSN EN 15824'],
-          ['Vlastnosti', 'vysoce vodoodpudivá, paropropustná, omyvatelná, odolná znečištění a povětrnostním vlivům', ''],
+          ['Vlastnosti', 'extrémně vodoodpudivá, vysoce paropropustná, odolná povětrnostním vlivům a přirozenému znečišťování', ''],
           ['Faktor difuzního odporu µ', 'cca 40–60', ''],
+          ['Propustnost pro vodu', 'W3 – nízká', 'EN 1062-1'],
           ['Struktura a zrnitost', 'škrábaná K 1,5 / K 2 / K 3 · rýhovaná R 2 / R 3', ''],
-          ['Odstíny', 'vzorník Baumit Life', '']
-        ]
+          ['Odstíny', 'vybrané odstíny vzorníku Baumit Life', '']
+        ],
+        struktury: ['K 1,5', 'K 2', 'K 3', 'R 2', 'R 3']
       }
+    },
+
+    // Oficiální odkazy Baumit (klikací v PDF)
+    odkazy: {
+      silikonTop: { text: 'Baumit SilikonTop – produkt a technický list', url: 'https://baumit.cz/produkty/fasadni-omitky-a-barvy/fasadni-omitky/baumit-silikontop' },
+      baumitLife: { text: 'Prohlédnout vzorník Baumit Life', url: 'https://baumit.cz/servis-a-dokumenty/vzornik-barev-baumit-life' }
+    },
+
+    // Krátký řádek „V ceně je zahrnuto“ pod hlavní cenou
+    vCene: ['materiál', 'práce', 'lešení', 'doprava', 'systémové příslušenství', 'finální silikonová omítka'],
+
+    // „Co je součástí realizace“ – ukazat: false = čeká na potvrzení od Vojtěcha, v nabídce se nezobrazí
+    soucastRealizace: [
+      { text: 'Lepení desek tepelného izolantu', ukazat: true },
+      { text: 'Fasádní izolant EPS v tloušťce podle rozpočtu', ukazat: true },
+      { text: 'Mechanické kotvení talířovými hmoždinkami', ukazat: true },
+      { text: 'Zateplení ostění a detailů kolem oken a dveří', ukazat: true },
+      { text: 'Rohové a připojovací systémové profily', ukazat: true },
+      { text: 'Výztužná vrstva se sklotextilní síťovinou', ukazat: true },
+      { text: 'Penetrace pod finální omítku', ukazat: true },
+      { text: 'Finální silikonová omítka Baumit SilikonTop', ukazat: true },
+      { text: 'Lešení', ukazat: true },
+      { text: 'Doprava materiálu', ukazat: true },
+      { text: 'Příprava podkladu pro zateplení', ukazat: false },   // TODO ověřit rozsah
+      { text: 'Závěrečný úklid pracoviště', ukazat: false }          // TODO ověřit
+    ],
+
+    // Typické výluky – ve formuláři se zaškrtávají podle konkrétní zakázky (výchozí: nic)
+    vylukyTypicke: [
+      'Výměna parapetů',
+      'Klempířské práce nad rámec nabídky',
+      'Rozsáhlejší sanace nesoudržného podkladu',
+      'Úpravy soklu',
+      'Jiné práce výslovně neuvedené v nabídce'
+    ],
+
+    texty: {
+      vymera: 'Výměra je stanovena z celkových fasádních ploch bez odečtu stavebních otvorů. Tento způsob kalkulace zohledňuje zvýšenou pracnost detailů kolem oken a dveří, včetně zateplení ostění a souvisejících dokončovacích prací.',
+      terminObecny: 'Předpokládaný termín zahájení realizace stanovíme po potvrzení nabídky s ohledem na aktuální kapacity a vhodné klimatické podmínky.',
+      odstin: 'Odstín finální omítky vyberete ze vzorníku Baumit Life. Pro SilikonTop jsou k dispozici vybrané odstíny vzorníku a finální odstín doporučujeme potvrdit podle fyzického vzorníku.',
+      odstinPriplatek: 'Některé odstíny mohou být příplatkové. Jejich případný cenový rozdíl upřesníme před objednáním materiálu.'
     },
 
     platby: [
@@ -156,11 +207,11 @@ window.NASTAVENI = {
       { procento: 25, text: 'Po dokončení prací a předání fasády.' }
     ],
 
+    // Další podmínky. {termin} = termín z formuláře, nebo obecný text (jeden zdroj pro celou nabídku).
+    // Výměra je vysvětlená u soupisu ploch, odstín u omítky – tady se neopakují.
     podminky: [
       { nadpis: 'Lešení v ceně', text: 'Lešení zajišťujeme my a je součástí ceny.' },
-      { nadpis: 'Výměry ploch', text: 'Plochy oken a dveří se neodečítají, protože cena zahrnuje zateplení špalet.' },
-      { nadpis: 'Termín realizace', text: 'Termín upřesníme po potvrzení nabídky, závisí na počasí. Standardně do 60 dní.' },
-      { nadpis: 'Odstín omítky', text: 'Odstín omítky se vybírá podle fyzického vzorníku a lze ho upřesnit i v průběhu realizace. Případné příplatkové odstíny doceňujeme.' },
+      { nadpis: 'Termín realizace', text: '{termin}' },
       { nadpis: 'Platnost nabídky', text: 'Nabídka platí {platnostDni} dní, do {platnostDo}.' }
     ]
   },
@@ -168,6 +219,9 @@ window.NASTAVENI = {
   /* ---------- Společné texty ---------- */
   texty: {
     uvod: 'na základě Vaší poptávky Vám předkládáme cenovou nabídku na zateplení Vašeho objektu. Ceny níže zahrnují materiál, práci i dopravu.',
-    platnost: 'Nabídka je nezávazná do podpisu smlouvy o dílo.'
+    platnost: 'Nabídka je nezávazná do podpisu smlouvy o dílo.',
+    ctaNadpis: 'Líbí se Vám naše nabídka?',
+    ctaFasada: 'Stačí nás kontaktovat telefonicky nebo e-mailem. Společně potvrdíme rozsah prací, vybereme odstín fasády a domluvíme termín realizace.',
+    ctaObecne: 'Stačí nás kontaktovat telefonicky nebo e-mailem. Společně potvrdíme rozsah prací a domluvíme termín realizace.'
   }
 };

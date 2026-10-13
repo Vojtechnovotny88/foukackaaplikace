@@ -110,16 +110,20 @@
 
   // řádek klíčových čísel
   function statRail(staty) {
-    const n = staty.length, gap = 14, w = (CW - gap * (n - 1)) / n;
+    const n = staty.length, gap = n > 4 ? 10 : 14, vahy = staty.map(s => s.vaha || 1), sum = vahy.reduce((a, b) => a + b, 0);
+    const husto = n > 4;
     return {
-      columns: staty.map((s, i) => ({
-        width: w,
-        stack: [
-          rule(w, i === 0 ? C.accent : C.border, i === 0 ? 2 : 1),
-          label(s.popis, C.t2, { margin: [0, 8, 0, 4] }),
-          { text: [{ text: s.hodnota, fontSize: s.velke ? 19 : 15, bold: true, characterSpacing: -0.4 }, s.jednotka ? { text: ' ' + s.jednotka, fontSize: 9, bold: true, color: C.t2 } : ''] }
-        ]
-      })),
+      columns: staty.map((s, i) => {
+        const w = (CW - gap * (n - 1)) * vahy[i] / sum;
+        return {
+          width: w,
+          stack: [
+            rule(w, i === 0 ? C.accent : C.border, i === 0 ? 2 : 1),
+            label(s.popis, C.t2, { margin: [0, 8, 0, 4] }),
+            { text: [{ text: s.hodnota, fontSize: s.velke ? (husto ? 17 : 19) : (husto ? 13 : 15), bold: true, characterSpacing: -0.4 }, s.jednotka ? { text: ' ' + s.jednotka, fontSize: husto ? 8 : 9, bold: true, color: C.t2 } : ''] }
+          ]
+        };
+      }),
       columnGap: gap, margin: [0, 18, 0, 0]
     };
   }
@@ -137,6 +141,53 @@
     const n = obrazky.length; if (!n) return null;
     const gap = 8, w = (CW - gap * (n - 1)) / n;
     return { columns: obrazky.map(src => ({ width: w, image: src, width: w, height: vyska })), columnGap: gap };
+  }
+
+  // řádek „V ceně je zahrnuto“
+  function vCeneBox(polozky, margin) {
+    return {
+      table: { widths: ['auto', '*'], body: [[
+        label('V ceně je zahrnuto', C.t2, { margin: [0, 1.5, 0, 0] }),
+        { text: polozky.join('  ·  '), bold: true, fontSize: 8.6 }
+      ]] },
+      layout: { fillColor: () => C.bg, hLineWidth: () => 0, vLineWidth: () => 0, paddingLeft: (i) => i === 0 ? 12 : 10, paddingRight: () => 12, paddingTop: () => 9, paddingBottom: () => 9 },
+      margin: margin || [0, 14, 0, 0], unbreakable: true
+    };
+  }
+
+  // decentní klikací odkaz
+  const odkaz = (text, url, extra = {}) => Object.assign({ text: [{ text: text + '  ', link: url, bold: true, color: C.primary, decoration: 'underline', decorationColor: C.border }, { text: '→', link: url, bold: true, color: C.b700 }], fontSize: 8.8 }, extra);
+
+  // seznam s odrážkou (zelená krátká čárka) ve 2 sloupcích
+  function seznam2(polozky, barvaZnacky) {
+    const gap = 24, w = (CW - gap) / 2, half = Math.ceil(polozky.length / 2);
+    const sl = arr => ({
+      width: w,
+      table: { widths: [13, '*'], body: arr.map(t => [{ canvas: [{ type: 'rect', x: 0, y: 5.4, w: 7, h: 1.6, color: barvaZnacky || C.accent }] }, { text: t }]) },
+      layout: { hLineWidth: () => 0, vLineWidth: () => 0, paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 5 }
+    });
+    return { columns: [sl(polozky.slice(0, half)), sl(polozky.slice(half))], columnGap: gap };
+  }
+
+  // skladba jako horizontální proces 01–06 (linka + číslované čtverečky)
+  function skladbaV(vrstvy) {
+    const n = vrstvy.length, gap = 8, w = (CW - gap * (n - 1)) / n, sq = 18;
+    const posledni = i => i === n - 1;
+    return {
+      stack: [
+        { canvas: [{ type: 'line', x1: 0, y1: sq / 2, x2: CW, y2: sq / 2, lineWidth: 1, lineColor: C.border }].concat(
+          vrstvy.map((v, i) => ({ type: 'rect', x: i * (w + gap), y: 0, w: sq, h: sq, color: posledni(i) ? C.accent : C.primary }))) },
+        { columns: vrstvy.map((v, i) => ({ width: w, text: pad2(i + 1), bold: true, fontSize: 7.4, lineHeight: 1, color: posledni(i) ? C.primary : C.inv, margin: [4.4, 0, 0, 0] })), columnGap: gap, margin: [0, -13.2, 0, 0] },
+        {
+          columns: vrstvy.map((v) => ({
+            width: w, stack: [
+              { text: v.nazev, bold: true, fontSize: 8.6, lineHeight: 1.15, margin: [0, 0, 0, 3] },
+              { text: v.text, fontSize: 7.6, color: C.t2, lineHeight: 1.28 }
+            ]
+          })), columnGap: gap, margin: [0, 10, 0, 0]
+        }
+      ]
+    };
   }
 
   /* ---------- hlavní funkce ---------- */
@@ -187,11 +238,15 @@
       staty.push({ popis: 'Plocha', hodnota: m2(d.foukana.plocha).replace(' m²', ''), jednotka: 'm²' });
       staty.push({ popis: 'Tloušťka izolace', hodnota: d.foukana.tloustka.replace(' cm', ''), jednotka: 'cm' });
     } else if (d.fasada) {
+      staty[0].vaha = 1.35;
       staty.push({ popis: 'Plocha k zateplení', hodnota: m2(d.fasada.vymera).replace(' m²', ''), jednotka: 'm²' });
-      staty.push({ popis: 'Izolant EPS', hodnota: d.fasada.rozsahTloustek, jednotka: 'cm' });
+      const rozsahEps = /–/.test(d.fasada.izolantText);
+      staty.push({ popis: rozsahEps ? 'Izolant EPS' : 'Izolant', hodnota: d.fasada.izolantText.replace(/ mm$/, '').replace(rozsahEps ? /^EPS / : /$^/, ''), jednotka: 'mm', vaha: 1.1 });
+      staty.push({ popis: 'Cena za m² vč. DPH', hodnota: d.fasada.cenaM2Text, jednotka: 'Kč/m²', vaha: 1.2 });
     }
-    staty.push({ popis: 'Platnost do', hodnota: d.platnostDo });
+    staty.push({ popis: 'Platnost nabídky', hodnota: d.platnostDo });
     content.push(statRail(staty));
+    if (d.fasada && !d.foukana) content.push(vCeneBox(N.fasada.vCene));
 
     /* ===== Strany ===== */
     content.push(strany(
@@ -209,7 +264,7 @@
           h3('Souhrn nabídky', { margin: [0, 18, 0, 6] }),
           tabulka(['*', 90, 100], ['Služba', 'Rozsah', 'Cena vč. DPH'], [
             [{ stack: [{ text: d.foukana.nazevSluzby, bold: true }, { text: d.foukana.material.nazev + ', ' + d.foukana.tloustka, color: C.t2, fontSize: 8.5 }] }, m2(d.foukana.plocha), { text: kc(d.foukana.celkem), bold: true }],
-            [{ stack: [{ text: 'Zateplení fasády', bold: true }, { text: 'Baumit ETICS, EPS ' + d.fasada.rozsahTloustek + ' cm, omítka SilikonTop', color: C.t2, fontSize: 8.5 }] }, m2(d.fasada.vymera), { text: kc(d.fasada.celkem), bold: true }]
+            [{ stack: [{ text: 'Zateplení fasády', bold: true }, { text: 'Systém Baumit, ' + d.fasada.izolantText + ', omítka Baumit SilikonTop', color: C.t2, fontSize: 8.5 }] }, m2(d.fasada.vymera), { text: kc(d.fasada.celkem), bold: true }]
           ], { align: [null, 'right', 'right'] }),
           celkem('Cena celkem vč. DPH', 'Podrobný rozpis a podmínky najdete u jednotlivých služeb.', d.celkem)
         ], unbreakable: true
@@ -275,10 +330,10 @@
 
     /* ===== FASÁDA ===== */
     if (d.fasada) {
-      const s = d.fasada;
+      const s = d.fasada, S = N.fasada, om = S.system.omitka;
       content.push({ stack: [sekce(++cisloSekce, 'Fasáda', 'Zateplení fasády systémem Baumit', s.uvodSekce)], pageBreak: d.foukana ? 'before' : undefined, margin: [0, d.foukana ? 0 : 26, 0, 0] });
 
-      // soupis ploch
+      // soupis ploch + způsob výpočtu výměry
       content.push(h3('Soupis ploch', { margin: [0, 0, 0, 8] }));
       content.push(tabulka([46, '*', 70, 80], ['Plocha', 'Popis', 'Výměra', 'Izolant'],
         s.plochy.map(p => [
@@ -287,51 +342,73 @@
           p.tloustka ? 'EPS ' + p.tloustka * 10 + ' mm' : { text: 'neřešeno', color: C.t3 }
         ]).concat([[{ text: 'Celkem k zateplení', bold: true, colSpan: 2 }, '', { text: m2(s.vymera), bold: true }, '']]),
         { align: [null, null, 'right', 'right'] }));
-      content.push({ text: 'Plochy oken a dveří se neodečítají, protože cena zahrnuje zateplení špalet.', fontSize: 8, color: C.t3, margin: [0, 6, 0, 0] });
+      content.push({ text: [{ text: 'Způsob výpočtu výměry: ', bold: true }, S.texty.vymera], fontSize: 8, color: C.t2, margin: [0, 7, 0, 0] });
 
       // rozpočet
       const rows = s.skupiny.map(g => [
-        { stack: [{ text: 'Izolant EPS ' + g.tloustka * 10 + ' mm', bold: true }, { text: '(' + kc(g.cenaM2) + '/m²)', color: C.t2, fontSize: 8.5 }] },
-        { text: g.kody, color: C.t2 }, m2(g.vymera), { text: kc(g.celkem), bold: true }
-      ]).concat(s.polozky.map(p => [{ text: p.nazev, bold: true }, '', '1 soub.', { text: kc(p.cena), bold: true }]));
-      rows.push([{ text: 'Cena bez DPH', colSpan: 3, color: C.t2 }, '', '', { text: kc(s.bezDph), color: C.t2 }]);
-      rows.push([{ text: 'DPH ' + s.sazbaDph + ' %', colSpan: 3, color: C.t2 }, '', '', { text: kc(s.dph), color: C.t2 }]);
+        { text: 'Izolant EPS ' + g.tloustka * 10 + ' mm', bold: true }, { text: g.kody, color: C.t2 },
+        m2(g.vymera), kc(g.cenaM2) + '/m²', { text: kc(g.celkem), bold: true }
+      ]).concat(s.polozky.map(p => [{ text: p.nazev, bold: true }, '', '1 soub.', kc(p.cena), { text: kc(p.cena), bold: true }]));
+      rows.push([{ text: 'Cena bez DPH', colSpan: 4, color: C.t2 }, '', '', '', { text: kc(s.bezDph), color: C.t2 }]);
+      rows.push([{ text: 'DPH ' + s.sazbaDph + ' %', colSpan: 4, color: C.t2 }, '', '', '', { text: kc(s.dph), color: C.t2 }]);
       content.push({
         stack: [
-          h3('Rozpočet podle tloušťky izolantu'),
-          tabulka(['*', 90, 70, 86], ['Položka', 'Plochy', 'Výměra', 'Cena vč. DPH'], rows, { align: [null, null, 'right', 'right'] })
+          h3('Rozpočet'),
+          tabulka(['*', 70, 62, 76, 80], ['Položka', 'Plochy', 'Výměra', 'Cena za m²', 'Cena vč. DPH'], rows, { align: [null, null, 'right', 'right', 'right'] })
         ], unbreakable: true
       });
-      content.push(celkem('Cena fasády celkem vč. DPH', 'Včetně lešení a silikonové omítky Baumit SilikonTop', s.celkem));
+      content.push(celkem('Cena fasády celkem vč. DPH', 'Kompletní realizace včetně lešení a finální silikonové omítky Baumit SilikonTop', s.celkem));
+      if (d.foukana) content.push(vCeneBox(S.vCene, [0, 8, 0, 0]));
       if (s.neresene) content.push({ text: 'Plochy mimo rozpočet (neřešeno): ' + s.neresene + '.', fontSize: 8, color: C.t3, margin: [0, 6, 0, 0] });
 
-      const info = [];
-      if (s.odstin) info.push({ popis: 'Odstín omítky', hodnota: s.odstin });
-      if (s.termin) info.push({ popis: 'Termín realizace', hodnota: s.termin });
-      if (info.length) content.push({ columns: info.map(i => ({ width: '*', stack: [label(i.popis, C.t2, { margin: [0, 0, 0, 3] }), { text: i.hodnota, bold: true }] })), columnGap: 24, margin: [0, 16, 0, 0], unbreakable: true });
+      // co je součástí realizace + výluky
+      const soucast = S.soucastRealizace.filter(x => x.ukazat).map(x => x.text);
+      content.push({ stack: [h3('Co je součástí realizace'), seznam2(soucast)], unbreakable: true });
+      if (s.vyluky.length) content.push({ stack: [h3('Není-li uvedeno jinak, nabídka nezahrnuje', { margin: [0, 12, 0, 8] }), seznam2(s.vyluky, C.border)], unbreakable: true });
 
-      // systém Baumit
+      // zateplovací systém – skladba
       content.push({
         stack: [
           h3('Zateplovací systém Baumit'),
-          { text: N.fasada.system.uvod, color: C.t2, margin: [0, 0, 0, 12] },
-          mrizka(N.fasada.system.vrstvy, 3, (v, i) => [
-            { text: pad2(i + 1), fontSize: 7, bold: true, color: C.b700, margin: [0, 7, 0, 3] },
-            { text: v.nazev, bold: true, fontSize: 9.5, margin: [0, 0, 0, 2] },
-            { text: v.text, fontSize: 8.2, color: C.t2 }
-          ])
+          { text: S.system.uvod, color: C.t2, margin: [0, 0, 0, 14] },
+          skladbaV(S.system.vrstvy)
         ], unbreakable: true
       });
 
       // finální omítka
-      const om = N.fasada.system.omitka;
-      if (om) content.push({
+      const vybrano = [s.struktura && ('struktura ' + s.struktura), s.odstin && ('odstín ' + s.odstin)].filter(Boolean).join(', ');
+      content.push({
         stack: [
-          h3('Finální omítka: ' + om.nazev),
-          { text: om.popis, color: C.t2, margin: [0, 0, 0, 10] },
-          tabulka(['*', 245, 66], ['Parametr', 'Hodnota', 'Norma'],
-            om.parametry.map(r => [r[0], { text: r[1], bold: true }, { text: r[2] || '', color: C.t3, fontSize: 8 }]), { align: [null, null, 'right'] })
+          h3('Finální omítka ' + om.nazev),
+          { text: om.popis, color: C.t2, margin: [0, 0, 0, 12] },
+          mrizka(om.vyhody, 2, (v) => [
+            { text: v.nazev.toUpperCase(), fontSize: 7.2, bold: true, characterSpacing: 0.6, margin: [0, 8, 0, 3] },
+            { text: v.text, fontSize: 8.6, color: C.t2 }
+          ], true)
         ], unbreakable: true
+      });
+      content.push({
+        stack: [
+          h3('Technické parametry omítky', { fontSize: 10.5, margin: [0, 16, 0, 6] }),
+          tabulka(['*', 250, 62], ['Parametr', 'Hodnota', 'Norma'],
+            om.parametry.map(r => [r[0], { text: r[1], bold: true }, { text: r[2] || '', color: C.t3, fontSize: 8 }]), { align: [null, null, 'right'] }),
+          { text: 'Podle oficiálního technického listu Baumit SilikonTop.', fontSize: 7.6, color: C.t3, margin: [0, 5, 0, 0] }
+        ], unbreakable: true
+      });
+
+      // výběr odstínu + odkazy
+      content.push({
+        table: { widths: ['*'], body: [[{
+          stack: [
+            label('Výběr odstínu', C.t2),
+            vybrano ? { text: [{ text: 'Zvoleno: ', color: C.t2 }, { text: vybrano, bold: true }], margin: [0, 5, 0, 0] } : '',
+            { text: S.texty.odstin, margin: [0, 5, 0, 0] },
+            { text: S.texty.odstinPriplatek, fontSize: 8, color: C.t2, margin: [0, 4, 0, 10] },
+            { columns: [odkaz(S.odkazy.silikonTop.text, S.odkazy.silikonTop.url, { width: 'auto' }), odkaz(S.odkazy.baumitLife.text, S.odkazy.baumitLife.url, { width: 'auto' })], columnGap: 22 }
+          ]
+        }]] },
+        layout: { fillColor: () => C.bg, hLineWidth: () => 0, vLineWidth: (i) => (i === 0 ? 2 : 0), vLineColor: () => C.accent, paddingLeft: () => 14, paddingRight: () => 14, paddingTop: () => 12, paddingBottom: () => 12 },
+        margin: [0, 14, 0, 0], unbreakable: true
       });
 
       // platby
@@ -346,7 +423,7 @@
         ], unbreakable: true
       });
 
-      content.push({ stack: [h3('Další podmínky'), mrizka(s.podminky, 2, podminkaBlok)], unbreakable: true });
+      content.push({ stack: [h3('Další podmínky'), mrizka(s.podminky, 3, podminkaBlok)], unbreakable: true });
       if (s.poznamka) content.push(poznamka(s.poznamka));
     }
 
@@ -355,18 +432,24 @@
       content.push({ stack: [h3('Fotografie z obhlídky', { margin: [0, 26, 0, 10] }), fotky(a.obhlidka, 128)], unbreakable: true });
     }
     if (a.realizace && a.realizace.length) {
-      content.push({ stack: [h3('Ukázky našich realizací', { margin: [0, 26, 0, 10] }), fotky(a.realizace, a.realizace.length === 1 ? 190 : 128)], unbreakable: true });
+      content.push({ stack: [h3('Ukázky našich realizací', { margin: [0, 26, 0, 10] }), fotky(a.realizace, a.realizace.length === 1 ? 150 : 128)], unbreakable: true });
     }
 
-    /* ===== Kontakt ===== */
-    const kontaktSloupec = (popis, hodnota) => ({ width: '*', stack: [label(popis, C.invM, { margin: [0, 0, 0, 4] }), { text: hodnota, color: C.inv, bold: true, fontSize: 10.5 }] });
+    /* ===== Kontakt / další postup ===== */
+    const kontaktSloupec = (popis, hodnota, url) => ({ width: '*', stack: [label(popis, C.invM, { margin: [0, 0, 0, 4] }), { text: hodnota, link: url, color: C.inv, bold: true, fontSize: 10.5 }] });
     content.push({
       table: {
         widths: ['*'], body: [[{
           stack: [
-            { text: 'Máte k nabídce otázky?', color: C.inv, bold: true, fontSize: 16, characterSpacing: -0.3 },
-            { text: 'Rádi vše vysvětlíme telefonicky, e-mailem nebo osobně. ' + N.texty.platnost, color: C.invM, margin: [0, 5, 0, 16] },
-            { columns: [kontaktSloupec('Telefon', F.telefon), kontaktSloupec('E-mail', F.email), kontaktSloupec('Web', F.web)], columnGap: 16 }
+            label('Další postup', C.b400, { margin: [0, 0, 0, 6] }),
+            { text: N.texty.ctaNadpis, color: C.inv, bold: true, fontSize: 16, characterSpacing: -0.3 },
+            { text: d.fasada ? N.texty.ctaFasada : N.texty.ctaObecne, color: C.invM, margin: [0, 5, 0, 16] },
+            { columns: [
+              kontaktSloupec('Telefon', F.telefon, 'tel:' + F.telefon.replace(/\s/g, '')),
+              kontaktSloupec('E-mail', F.email, 'mailto:' + F.email),
+              kontaktSloupec('Web', F.web, 'https://' + F.web.replace(/^https?:\/\//, ''))
+            ], columnGap: 16 },
+            { text: N.texty.platnost, color: C.invM, fontSize: 7.6, margin: [0, 14, 0, 0] }
           ]
         }]]
       },

@@ -27,6 +27,8 @@
   const TLOUSTKY = Object.keys(N.fasada.ceny).map(Number).sort((a, b) => a - b);
   fill($('vychoziTloustka'), TLOUSTKY.map(t => [t, t + ' cm (' + kc(N.fasada.ceny[t]) + '/m²)']));
   $('vychoziTloustka').value = N.fasada.vychoziTloustka;
+  fill($('strukturaOmitky'), [['', 'nezvoleno']].concat(N.fasada.system.omitka.struktury.map(x => [x, x])));
+  $('vyluky').innerHTML = N.fasada.vylukyTypicke.map(v => `<label class="check"><input type="checkbox" value="${esc(v)}"> ${esc(v)}</label>`).join('');
   $('lblLavka').textContent = kc(N.foukana.priplatky.lavka.cena) + '/bm';
   $('lblZaklop').textContent = kc(N.foukana.priplatky.zaklop.cena) + '/m²';
 
@@ -79,12 +81,13 @@
   });
 
   /* ---------- stav formuláře ---------- */
-  const POLE = ['jmeno', 'adresa', 'email', 'telefon', 'konstrukce', 'material', 'tloustka', 'cenaM2', 'plocha', 'lavka', 'zaklop', 'ohradkaKs', 'ohradkaCena', 'prirazka', 'poznamkaFoukana', 'vychoziTloustka', 'odstin', 'termin', 'uvodFasada', 'poznamkaFasada', 'platnost', 'uvod'];
+  const POLE = ['jmeno', 'adresa', 'email', 'telefon', 'konstrukce', 'material', 'tloustka', 'cenaM2', 'plocha', 'lavka', 'zaklop', 'ohradkaKs', 'ohradkaCena', 'prirazka', 'poznamkaFoukana', 'vychoziTloustka', 'odstin', 'strukturaOmitky', 'termin', 'vylukyVlastni', 'uvodFasada', 'poznamkaFasada', 'platnost', 'uvod'];
   const CHECK = ['sFoukana', 'sFasada', 'technickyList', 'realizace'];
 
   function ctiStav() {
     const s = {}; POLE.forEach(k => s[k] = $(k).value); CHECK.forEach(k => s[k] = $(k).checked);
     s.polozkyFoukana = ctiRadky('polozkyFoukana'); s.polozkyFasada = ctiRadky('polozkyFasada'); s.plochy = ctiRadky('plochy');
+    s.vyluky = [...document.querySelectorAll('#vyluky input:checked')].map(i => i.value);
     return s;
   }
   function zapisStav(s) {
@@ -95,6 +98,7 @@
     (s.polozkyFoukana || []).forEach(p => radekPolozka($('polozkyFoukana'), p));
     (s.polozkyFasada || []).forEach(p => radekPolozka($('polozkyFasada'), p));
     (s.plochy || []).forEach(p => radekPlocha(p));
+    document.querySelectorAll('#vyluky input').forEach(i => { i.checked = (s.vyluky || []).includes(i.value); });
   }
 
   /* ---------- výpočet ---------- */
@@ -146,11 +150,19 @@
         const castka = i === arr.length - 1 ? zbyva : Math.round(celkem * p.procento / 100); zbyva -= castka;
         return Object.assign({}, p, { castka });
       });
+      // termín realizace = jediný zdroj pro celou nabídku
+      const termin = s.termin.trim() || N.fasada.texty.terminObecny;
+      const podmFas = podm(N.fasada.podminky).map(p => Object.assign(p, { text: p.text.replace(/\{termin\}/g, termin) }));
+      const ceny = skupiny.map(g => g.cenaM2);
       d.fasada = {
         plochy, skupiny, polozky, celkem, bezDph, dph: celkem - bezDph, sazbaDph: sazba, platby,
         vymera: skupiny.reduce((a, g) => a + g.vymera, 0), rozsahTloustek: rozsah,
         neresene: plochy.filter(p => !p.tloustka).map(p => p.kod).filter(Boolean).join(', '),
-        podminky: podm(N.fasada.podminky), odstin: s.odstin.trim(), termin: s.termin.trim(), uvodSekce: s.uvodFasada.trim() || null, poznamka: s.poznamkaFasada.trim()
+        podminky: podmFas, odstin: s.odstin.trim(), struktura: s.strukturaOmitky || '', termin: termin,
+        vyluky: (s.vyluky || []).concat(s.vylukyVlastni.split('\n').map(x => x.trim()).filter(Boolean)),
+        cenyM2: ceny, cenaM2Text: !ceny.length ? '–' : Math.min(...ceny) === Math.max(...ceny) ? fmt(ceny[0]) : fmt(Math.min(...ceny)) + '–' + fmt(Math.max(...ceny)),
+        izolantText: !t.length ? '–' : 'EPS ' + (Math.min(...t) === Math.max(...t) ? t[0] * 10 : Math.min(...t) * 10 + '–' + Math.max(...t) * 10) + ' mm',
+        uvodSekce: s.uvodFasada.trim() || null, poznamka: s.poznamkaFasada.trim()
       };
       d.celkem += celkem;
     }
@@ -161,6 +173,43 @@
         : d.fasada ? 'Zateplení fasády systémem Baumit' : 'Cenová nabídka';
     return d;
   }
+  /* ---------- kontrola konzistence před exportem (nic neopravuje, jen hlásí) ---------- */
+  function kontrola(d) {
+    const chyby = [], eq = (a, b) => Math.abs(a - b) < 0.5;
+    if (!d.foukana && !d.fasada) chyby.push('Není zaškrtnutá žádná služba.');
+    if (d.foukana) {
+      const f = d.foukana;
+      if (!(f.plocha > 0)) chyby.push('Foukaná izolace: plocha je 0 m².');
+      if (!(f.cenaM2 > 0)) chyby.push('Foukaná izolace: cena za m² je 0.');
+      f.radky.forEach(r => { if (!eq(Math.round(r.celkem), Math.round(r.cenaJ * (parseFloat(String(r.mnozstvi).replace(/\s/g, '').replace(',', '.')) || 1)))) chyby.push('Foukaná izolace: nesedí součin u položky „' + r.nazev + '“.'); });
+      if (!eq(f.radky.reduce((a, r) => a + Math.round(r.celkem), 0), f.celkem)) chyby.push('Foukaná izolace: součet položek nesedí s celkem.');
+    }
+    if (d.fasada) {
+      const s = d.fasada;
+      const zapoc = s.plochy.filter(p => p.tloustka > 0 && p.vymera > 0);
+      if (!zapoc.length) chyby.push('Fasáda: žádná plocha s výměrou a tloušťkou.');
+      s.plochy.forEach(p => { if (p.tloustka > 0 && !(p.vymera > 0)) chyby.push('Fasáda: plocha ' + (p.kod || '?') + ' nemá výměru.'); });
+      if (!eq(zapoc.reduce((a, p) => a + p.vymera, 0) * 100, s.vymera * 100)) chyby.push('Fasáda: součet ploch nesedí s celkovou výměrou.');
+      s.skupiny.forEach(g => {
+        if (!g.cenaM2) chyby.push('Fasáda: chybí cena pro tloušťku ' + g.tloustka + ' cm.');
+        if (!eq(g.celkem, Math.round(g.vymera * g.cenaM2))) chyby.push('Fasáda: výměra × cena nesedí u EPS ' + g.tloustka * 10 + ' mm.');
+      });
+      if (!eq(s.skupiny.reduce((a, g) => a + g.celkem, 0) + s.polozky.reduce((a, p) => a + p.cena, 0), s.celkem)) chyby.push('Fasáda: součet rozpočtu nesedí s celkem.');
+      if (!eq(s.bezDph + s.dph, s.celkem)) chyby.push('Fasáda: cena bez DPH + DPH ≠ cena s DPH.');
+      if (s.platby.reduce((a, p) => a + p.procento, 0) !== 100) chyby.push('Fasáda: platby nedávají dohromady 100 %.');
+      if (!eq(s.platby.reduce((a, p) => a + p.castka, 0), s.celkem)) chyby.push('Fasáda: součet splátek nesedí s celkovou cenou.');
+    }
+    if (!eq((d.foukana ? d.foukana.celkem : 0) + (d.fasada ? d.fasada.celkem : 0), d.celkem)) chyby.push('Celková cena nesedí se součtem služeb.');
+    if (!d.zakaznik.jmeno) chyby.push('Chybí jméno zákazníka.');
+    return chyby;
+  }
+  function ukazKontrolu(chyby) {
+    const el = $('kontrola');
+    el.hidden = !chyby.length;
+    el.innerHTML = chyby.length ? 'Kontrola nabídky našla problém:<ul>' + chyby.map(c => '<li>' + esc(c) + '</li>').join('') + '</ul>' : '';
+  }
+  const pokracovatPresChyby = d => { const ch = kontrola(d); ukazKontrolu(ch); return !ch.length || confirm('Kontrola nabídky našla problém:\n\n– ' + ch.join('\n– ') + '\n\nPřesto pokračovat?'); };
+
   function fmt2(n) { return (Math.round(n * 100) / 100).toLocaleString('cs-CZ', { maximumFractionDigits: 2 }); }
 
   /* ---------- obrázky ---------- */
@@ -201,7 +250,7 @@
       if (d.foukana && d.fasada) src = ['pudy-4.jpg', 'pudy-1.jpg', 'fasada-1.jpg'];
       else if (d.foukana) src = ['pudy-1.jpg', 'pudy-4.jpg', 'pudy-2.jpg'];
       else if (d.fasada) src = ['fasada-1.jpg'];
-      a.realizace = await Promise.all(src.map(f => orez(new URL('assets/img/' + f, location.href).href, src.length === 1 ? CW / 190 : p3)));
+      a.realizace = await Promise.all(src.map(f => orez(new URL('assets/img/' + f, location.href).href, src.length === 1 ? CW / 150 : p3)));
     }
     return a;
   }
@@ -265,6 +314,7 @@
 
   function souhrny() {
     const d = spocitej(ctiStav());
+    ukazKontrolu(kontrola(d));
     $('sumFoukana').textContent = kc(d.foukana ? d.foukana.celkem : 0);
     $('sumFasada').textContent = kc(d.fasada ? d.fasada.celkem : 0);
     $('sumFasadaM2').textContent = fmt2(d.fasada ? d.fasada.vymera : 0) + ' m²';
@@ -292,6 +342,7 @@
   $('btnPdf').addEventListener('click', async () => {
     const b = $('btnPdf'); b.disabled = true; b.textContent = 'Připravuji PDF…';
     try {
+      if (!pokracovatPresChyby(spocitej(ctiStav()))) { b.disabled = false; b.textContent = 'Stáhnout PDF'; return; }
       const { bytes, d } = await vytvorPdf(ctiStav());
       const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
       const l = document.createElement('a'); l.href = url; l.download = nazevSouboru(d); document.body.appendChild(l); l.click(); l.remove();
@@ -307,6 +358,7 @@
     const s = ctiStav();
     if (!s.email.trim()) { toast('Vyplňte prosím e-mail zákazníka.', true); $('email').focus(); return; }
     if (!s.sFoukana && !s.sFasada) { toast('Zaškrtněte aspoň jednu službu.', true); return; }
+    if (!pokracovatPresChyby(spocitej(s))) return;
     const b = $('btnOdeslat'); b.disabled = true; b.textContent = 'Odesílám…';
     try {
       const { bytes, d } = await vytvorPdf(s);
@@ -358,7 +410,7 @@
   /* ---------- start ---------- */
   function vychozi() {
     const m = Object.keys(N.foukana.materialy)[0], t = Object.keys(N.foukana.materialy[m].ceny)[0];
-    return { jmeno: '', adresa: '', email: '', telefon: '', konstrukce: N.foukana.konstrukce[0], material: m, tloustka: t, cenaM2: N.foukana.materialy[m].ceny[t], plocha: 100, lavka: 0, zaklop: 0, ohradkaKs: 0, ohradkaCena: N.foukana.priplatky.ohradka.cena, prirazka: 0, poznamkaFoukana: '', vychoziTloustka: N.fasada.vychoziTloustka, odstin: '', termin: '', uvodFasada: '', poznamkaFasada: '', platnost: N.platnostDni, uvod: N.texty.uvod, sFoukana: true, sFasada: false, technickyList: true, realizace: true, polozkyFoukana: [], polozkyFasada: [], plochy: [] };
+    return { jmeno: '', adresa: '', email: '', telefon: '', konstrukce: N.foukana.konstrukce[0], material: m, tloustka: t, cenaM2: N.foukana.materialy[m].ceny[t], plocha: 100, lavka: 0, zaklop: 0, ohradkaKs: 0, ohradkaCena: N.foukana.priplatky.ohradka.cena, prirazka: 0, poznamkaFoukana: '', vychoziTloustka: N.fasada.vychoziTloustka, odstin: '', strukturaOmitky: '', termin: '', vylukyVlastni: '', vyluky: [], uvodFasada: '', poznamkaFasada: '', platnost: N.platnostDni, uvod: N.texty.uvod, sFoukana: true, sFasada: false, technickyList: true, realizace: true, polozkyFoukana: [], polozkyFasada: [], plochy: [] };
   }
   noveCislo();
   zapisStav(vychozi());
@@ -366,5 +418,5 @@
   zmena();
 
   // pro testy
-  window.__generator = { vytvorPdf, ctiStav, zapisStav, spocitej };
+  window.__generator = { vytvorPdf, ctiStav, zapisStav, spocitej, kontrola };
 })();

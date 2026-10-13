@@ -38,6 +38,17 @@ Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v
   Aplikace nově posílá i hotový předmět a text e-mailu (`emailSubject`, `emailBody`).
 - Ceník, podmínky, texty e-mailu a kontakty jsou na jednom místě: `js/nastaveni.js`.
 
+### 13. 10. 2026 – vylepšená fasádní nabídka
+- Na titulní straně cena za m² a řádek „V ceně je zahrnuto“.
+- Nové vysvětlení výměry (bez odečtu otvorů kvůli pracnosti ostění a detailů).
+- Rozpočet se sloupcem cena za m².
+- Nové části „Co je součástí realizace“ a „Není-li uvedeno jinak, nabídka nezahrnuje“ (výluky se zaškrtávají u každé zakázky).
+- Skladba zateplení 01–06 jako přehledný proces, srozumitelnější texty.
+- Baumit SilikonTop: výhody pro zákazníka + parametry podle oficiálního technického listu, výběr odstínu, klikací odkazy na Baumit.
+- Termín realizace z jednoho místa (už nemůže být v nabídce dvakrát jinak).
+- Závěr „Další postup“ s klikacím telefonem, e-mailem a webem.
+- Automatická kontrola výpočtů před stažením a odesláním.
+
 ---
 
 ## Stav
@@ -48,6 +59,7 @@ Technické detaily pro práci s kódem jsou v `CLAUDE.md`, vizuální pravidla v
 - [x] Netlify napojen na GitHub – každá změna se nasadí sama (8. 10.)
 - [x] Fasáda: v nabídce uvedeno, že cena zahrnuje silikonovou omítku Baumit SilikonTop, včetně jejích parametrů (8. 10.)
 - [ ] Zkušební odeslání na vlastní e-mail
+- [ ] Fasáda – potvrdit: celý systém Baumit? certifikace? příprava podkladu a úklid v ceně? „standardně do 60 dní“?
 
 ## Plán – další kroky
 
